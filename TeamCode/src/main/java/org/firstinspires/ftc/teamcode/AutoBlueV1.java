@@ -40,7 +40,6 @@ public class AutoBlueV1 extends LinearOpMode {
     private CryptoboxDetector cryptoboxDetector = null;
     private GlyphDetector glyphDetector = null;
 
-
     public enum Pictographs {
         LEFT, CENTER, RIGHT
     }
@@ -131,7 +130,7 @@ public class AutoBlueV1 extends LinearOpMode {
 
         }
         if (pictographs == Pictographs.CENTER) {
-            glyphScoreCenter.Score();
+            //glyphScoreCenter.Score();
         }
         if (pictographs == Pictographs.RIGHT) {
 
