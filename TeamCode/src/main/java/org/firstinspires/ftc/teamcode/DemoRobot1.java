@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp(name="DemoRobot1", group="PinktotheFuture")
+@TeleOp(name="Scrimmage Robot", group="PinktotheFuture")
 public class DemoRobot1 extends LinearOpMode {
     bno055driver imu;
 
@@ -21,6 +21,8 @@ public class DemoRobot1 extends LinearOpMode {
         double LBpower = 0;
         double RFpower = 0;
         double RBpower = 0;
+        double relicpower = 0;
+        double relicposition = 0;
         double speed = 1;
 
         //double K1 = 0.5; //increase value not higher than 1
@@ -37,8 +39,12 @@ public class DemoRobot1 extends LinearOpMode {
         DcMotor LBdrive = hardwareMap.dcMotor.get("LBdrive");
         DcMotor RFdrive = hardwareMap.dcMotor.get("RFdrive");
 
+        Servo Relicservo = hardwareMap.servo.get("Relicservo");
+
         DcMotor Geleider = hardwareMap.dcMotor.get("geleider");
         Geleider.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        DcMotor Relic = hardwareMap.dcMotor.get("Relic");
 
 
 
@@ -92,6 +98,7 @@ public class DemoRobot1 extends LinearOpMode {
             LBpower = forward+rcw-strafe;
             RBpower = forward-rcw+strafe;
 
+           relicpower =0;
 
             if (gamepad1.b) {
                 LFdrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -107,6 +114,14 @@ public class DemoRobot1 extends LinearOpMode {
                 RFdrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             }
 
+            if (gamepad2.dpad_up) {
+                relicposition = .5;
+            }
+            if (gamepad2.dpad_down) {
+                relicposition = 0;
+            }
+
+            Relicservo.setPosition(relicposition);
 
             Range.clip(RFpower, -1, 1);
             Range.clip(RBpower, -1, 1);
@@ -120,6 +135,8 @@ public class DemoRobot1 extends LinearOpMode {
             RFdrive.setPower(RFpower * speed);
 
             Geleider.setPower(gamepad2.right_stick_y);
+            Relic.setPower(gamepad2.left_stick_y);
+
 
 
         }

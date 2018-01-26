@@ -95,12 +95,12 @@ public class AutoBlueV1 extends LinearOpMode {
 
         //Jewel Detector Settings
         jewelDetector.areaWeight = 0.05;
-        jewelDetector.downScaleFactor = .4;
+        jewelDetector.downScaleFactor = 1;
         jewelDetector.detectionMode = JewelDetector.JewelDetectionMode.MAX_AREA; // PERFECT_AREA
-        jewelDetector.perfectArea = 6500; //<- Needed for PERFECT_AREA
+        //jewelDetector.perfectArea = 6500; //<- Needed for PERFECT_AREA
         jewelDetector.debugContours = true;
         jewelDetector.maxDiffrence = 10;
-        jewelDetector.ratioWeight = .05;
+        jewelDetector.ratioWeight = 15;
         jewelDetector.minArea = 700;
         jewelDetector.rotateMat = true;
         jewelDetector.enable();
