@@ -34,6 +34,7 @@ public class AutoBlueV1 extends LinearOpMode {
     public static final String TAG = "Vuforia VuMark Sample";
     ClosableVuforiaLocalizer vuforia;
     AutonomousVoids voids = new AutonomousVoids();
+    DemoRobot1 drive = new DemoRobot1();
     VuforiaTrackable relicTemplate;
     GlyphScoreCenter glyphScoreCenter = new GlyphScoreCenter();
 
@@ -136,6 +137,9 @@ public class AutoBlueV1 extends LinearOpMode {
 
         }
         telemetry.update();
+        sleep(5000);
+        drive.runOpMode();
+
 
 
     }
