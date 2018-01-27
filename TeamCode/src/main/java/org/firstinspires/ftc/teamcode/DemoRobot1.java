@@ -69,7 +69,7 @@ public class DemoRobot1 extends LinearOpMode {
             double temp;
 
             //double max = Math.abs(LFpower);
-            double theta = imu.getAngles()[0];
+            double theta = imu.getAngles()[1];
 
             double forward = -gamepad1.left_stick_y;
             double strafe = gamepad1.left_stick_x;
