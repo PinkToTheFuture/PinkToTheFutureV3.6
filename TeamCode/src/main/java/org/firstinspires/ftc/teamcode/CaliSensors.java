@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
+@Disabled
 @Autonomous(name = "Cali Sensor", group = "cali")
 
 public class CaliSensors extends LinearOpMode {

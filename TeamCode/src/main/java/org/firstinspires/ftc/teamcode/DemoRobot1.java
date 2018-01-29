@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp(name="Scrimmage Robot", group="PinktotheFuture")
+@TeleOp(name="Scrimmage Robot met fcd", group="PinktotheFuture")
 public class DemoRobot1 extends LinearOpMode {
     bno055driver imu2; //to use the second, custom imu driver
     BNO055IMU imu; // to use the official imu driver
@@ -28,14 +28,9 @@ public class DemoRobot1 extends LinearOpMode {
         double relicposition = 0;
         double speed = 1;
 
-        boolean correcting = false;
-
-        Double[] imuArray;
-        imuArray = new Double[1];
-        imuArray[0] = 0.0;
 
         imu2 = new bno055driver("IMU", hardwareMap);
-        imu = hardwareMap.get(BNO055IMU.class, "IMU");
+
 
 
         DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
@@ -73,24 +68,15 @@ public class DemoRobot1 extends LinearOpMode {
             double temp;
 
             //double max = Math.abs(LFpower);
-            double theta = imu2.getAngles()[1];
+            double theta = (imu2.getAngles()[1]);
 
             double forward = -gamepad1.left_stick_y;
             double strafe = gamepad1.left_stick_x;
             double rcw = gamepad1.right_stick_x;
 
-            if (Math.abs(gamepad1.left_stick_x) > 0 || Math.abs(gamepad1.left_stick_y) > 0 || Math.abs(gamepad1.right_stick_x) > 0 || Math.abs(gamepad1.right_stick_y) > 0 ){
-                imuArray[0] = theta;
-            }
 
-            double oldAngle = imuArray[0]*180/Math.PI;
-            double newAngle = theta*180/Math.PI;
 
-            double rawDiff = oldAngle > newAngle ? oldAngle - newAngle : newAngle - oldAngle;
 
-            if (theta < 0){
-                rawDiff = rawDiff * -1;
-            }
 
             if (theta >0) {
                 temp = forward*Math.cos(theta)-strafe*Math.sin(theta);
@@ -104,25 +90,6 @@ public class DemoRobot1 extends LinearOpMode {
                 forward = temp;
             }
 
-            if (Math.abs(gamepad1.left_stick_x) == 0 && Math.abs(gamepad1.left_stick_y) == 0 && Math.abs(gamepad1.right_stick_x) ==  0 && Math.abs(gamepad1.right_stick_y) == 0){
-                if (rawDiff > 5.0){
-                    LFpower = 0.2;
-                    LBpower = 0.2;
-                    RFpower = -0.2;
-                    RBpower = -0.2;
-                }
-
-                if (rawDiff < -5.0){
-                    LFpower = -0.2;
-                    LBpower = -0.2;
-                    RFpower = 0.2;
-                    RBpower = 0.2;
-                }
-
-                correcting = true;
-            }else{
-                correcting = false;
-            }
 
             RFpower = 0;
             RBpower = 0;
@@ -173,6 +140,8 @@ public class DemoRobot1 extends LinearOpMode {
 
             Geleider.setPower(gamepad2.right_stick_y);
             Relic.setPower(gamepad2.left_stick_y);
+
+            telemetry.addData("angle: ", theta);
 
 
 

@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
 import com.qualcomm.robotcore.util.Range;
 import com.sun.tools.javac.util.Convert;
 
-
+@Disabled
 @TeleOp(name="SelfCorrectingMecanumV3", group="PinktotheFuture")
 public class SelfCorrectingMecanumV3 extends LinearOpMode {
     bno055driver imu2;

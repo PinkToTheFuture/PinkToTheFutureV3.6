@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.io.IOException;
 
-
+@Disabled
 @TeleOp(name="CryptoBoxFinder", group="DogeCV")
 
 public class CryptoBoxFinder extends OpMode

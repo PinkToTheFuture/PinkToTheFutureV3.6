@@ -54,6 +54,7 @@ import java.util.Locale;
  *
  * @see <a href="http://www.adafruit.com/products/2472">Adafruit IMU</a>
  */
+@Disabled
 @Autonomous(name = "BNO055 IMU GYRO REV", group = "Sensor")
 public class REVGYRO extends LinearOpMode
     {

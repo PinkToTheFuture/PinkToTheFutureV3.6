@@ -85,7 +85,7 @@ public class PTTF_AUTO_RED extends LinearOpMode implements org.firstinspires.ftc
         RBdrive.setPower(0);
 
     }
-    private void Reverse(double omw, double pwr) throws InterruptedException{
+    public void Reverse(double omw, double pwr) throws InterruptedException{
         boolean loop = true;
         DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
         DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
@@ -147,7 +147,7 @@ public class PTTF_AUTO_RED extends LinearOpMode implements org.firstinspires.ftc
         RBdrive.setPower(0);
     }
 
-    private void Right_Gyro(double degrees, double pwr, double sloommultiplier) throws InterruptedException{
+    public void Right_Gyro(double degrees, double pwr, double sloommultiplier) throws InterruptedException{
         ModernRoboticsI2cGyro gyro = hardwareMap.get((ModernRoboticsI2cGyro.class), "gyro");
         gyro.setHeadingMode(ModernRoboticsI2cGyro.HeadingMode.HEADING_CARDINAL);
 
@@ -216,7 +216,7 @@ public class PTTF_AUTO_RED extends LinearOpMode implements org.firstinspires.ftc
 
     }
 
-    private void Left_Gyro(double degrees, double pwr, double sloommultiplier) throws InterruptedException{
+    public void Left_Gyro(double degrees, double pwr, double sloommultiplier) throws InterruptedException{
         ModernRoboticsI2cGyro gyro = hardwareMap.get((ModernRoboticsI2cGyro.class), "gyro");
 
         DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
@@ -274,7 +274,7 @@ public class PTTF_AUTO_RED extends LinearOpMode implements org.firstinspires.ftc
         RBdrive.setPower(0);
     }
 
-    private void init_gyro() throws InterruptedException{
+    public void init_gyro() throws InterruptedException{
         ModernRoboticsI2cGyro gyro = hardwareMap.get((ModernRoboticsI2cGyro.class), "gyro");
         gyro.calibrate();
         gyro.setHeadingMode(ModernRoboticsI2cGyro.HeadingMode.HEADING_CARDINAL);
@@ -285,7 +285,7 @@ public class PTTF_AUTO_RED extends LinearOpMode implements org.firstinspires.ftc
         telemetry.update();
     }
 
-    private void shoot() throws InterruptedException{
+    public void shoot() throws InterruptedException{
         Servo shooterservoX = hardwareMap.servo.get("shooterservox");
         TouchSensor shootertouch = hardwareMap.touchSensor.get("shootertouch");
 
@@ -322,7 +322,7 @@ public class PTTF_AUTO_RED extends LinearOpMode implements org.firstinspires.ftc
         }
     }
 
-    private void Left_Sideways(double omw, double pwr) throws InterruptedException {
+    public void Left_Sideways(double omw, double pwr) throws InterruptedException {
         boolean loop = true;
         DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
         DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
@@ -396,7 +396,7 @@ public class PTTF_AUTO_RED extends LinearOpMode implements org.firstinspires.ftc
         RBdrive.setPower(0);
     }
 
-    private void Right_Sideways(double omw, double pwr) throws InterruptedException {
+    public void Right_Sideways(double omw, double pwr) throws InterruptedException {
         boolean loop = true;
         DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
         DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
@@ -471,7 +471,7 @@ public class PTTF_AUTO_RED extends LinearOpMode implements org.firstinspires.ftc
     }
 
 
-    private void Push1() throws InterruptedException{
+    public void Push1() throws InterruptedException{
         ColorSensor Lcolor = hardwareMap.colorSensor.get("lcolor");
         Lcolor.setI2cAddress(I2cAddr.create8bit(0x2c));
         Lcolor.enableLed(false);
@@ -520,7 +520,7 @@ public class PTTF_AUTO_RED extends LinearOpMode implements org.firstinspires.ftc
             telemetry.update();
         }
     }
-    private void Push2() throws InterruptedException{
+    public void Push2() throws InterruptedException{
         ColorSensor Lcolor = hardwareMap.colorSensor.get("lcolor");
         Lcolor.setI2cAddress(I2cAddr.create8bit(0x2c));
         Lcolor.enableLed(false);
@@ -570,7 +570,7 @@ public class PTTF_AUTO_RED extends LinearOpMode implements org.firstinspires.ftc
         }
     }
 
-    private void FollowWallRight(double omw, double pwr, double pwrmultiplier, double afstand, double threshold) throws InterruptedException{
+    public void FollowWallRight(double omw, double pwr, double pwrmultiplier, double afstand, double threshold) throws InterruptedException{
         ModernRoboticsI2cGyro gyro = hardwareMap.get((ModernRoboticsI2cGyro.class), "gyro");
 
         UltrasonicSensor ultraR = hardwareMap.ultrasonicSensor.get("ultraR");
@@ -672,7 +672,7 @@ public class PTTF_AUTO_RED extends LinearOpMode implements org.firstinspires.ftc
         RBdrive.setPower(0);
 
     }
-    private void DriveToLineLeft(double pwr, double threshold) throws InterruptedException{
+    public void DriveToLineLeft(double pwr, double threshold) throws InterruptedException{
         boolean loop = true;
 
         ModernRoboticsI2cGyro gyro = hardwareMap.get((ModernRoboticsI2cGyro.class), "gyro");

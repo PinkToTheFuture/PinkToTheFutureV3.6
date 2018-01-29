@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode;
 import android.media.MediaPlayer;
 import android.net.rtp.AudioStream;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,7 +14,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import java.io.File;
 
-
+@Disabled
 @TeleOp(name="KickOffRobot", group="PinktotheFuture")
 public class KickOffRobot extends LinearOpMode implements org.firstinspires.ftc.teamcode.ServoVariables {
     bno055driver imu;

@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp(name="Basic Mecanum Drive", group="PinktotheFuture")
+@TeleOp(name="Scrimmage robot zonder fcd", group="PinktotheFuture")
 public class Drive_Robot_Omni extends LinearOpMode {
 
     @Override
@@ -24,12 +24,22 @@ public class Drive_Robot_Omni extends LinearOpMode {
         double geleiderPower = 0;
         double sweeperPower = 0;
 
+        double relicpower = 0;
+        double relicposition = 0.5;
 
 
         DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
         DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
         DcMotor LBdrive = hardwareMap.dcMotor.get("LBdrive");
         DcMotor RFdrive = hardwareMap.dcMotor.get("RFdrive");
+
+        Servo Relicservo = hardwareMap.servo.get("Relicservo");
+
+        DcMotor Geleider = hardwareMap.dcMotor.get("geleider");
+        Geleider.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        DcMotor Relic = hardwareMap.dcMotor.get("Relic");
+
 
         //RFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
         //RBdrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -55,12 +65,6 @@ public class Drive_Robot_Omni extends LinearOpMode {
             LFpower = -((gamepad1.left_stick_y - gamepad1.left_stick_x) / 2);
             LBpower = -((gamepad1.left_stick_y + gamepad1.left_stick_x) / 2);
 
-            //RIGHT STICK
-            RFpower = RFpower - (gamepad1.right_stick_x);
-            RBpower = RBpower - (gamepad1.right_stick_x);
-            LFpower = LFpower + (gamepad1.right_stick_x);
-            LBpower = LBpower + (gamepad1.right_stick_x);
-
 
             if (gamepad1.left_stick_x > -0.1 && gamepad1.left_stick_x < 0.1) {
                 RFpower = -gamepad1.left_stick_y;
@@ -75,6 +79,25 @@ public class Drive_Robot_Omni extends LinearOpMode {
                 LBpower = -gamepad1.left_stick_x;
             }
 
+
+            RFpower = RFpower - (-gamepad1.right_stick_x);
+            RBpower = RBpower - (-gamepad1.right_stick_x);
+            LFpower = LFpower + (-gamepad1.right_stick_x);
+            LBpower = LBpower + (-gamepad1.right_stick_x);
+
+            if (gamepad2.dpad_right) {
+                relicposition = .5;
+            }
+            if (gamepad2.dpad_left) {
+                relicposition = 0;
+            }
+
+            Relicservo.setPosition(relicposition);
+
+            Geleider.setPower(-gamepad2.right_stick_y);
+            Relic.setPower(gamepad2.left_stick_y);
+
+
             Range.clip(RFpower, -1, 1);
             Range.clip(RBpower, -1, 1);
             Range.clip(LFpower, -1, 1);
@@ -82,10 +105,10 @@ public class Drive_Robot_Omni extends LinearOpMode {
 
 
 
-            LFdrive.setPower(LFpower * fastency);
-            RBdrive.setPower(RBpower * fastency);
-            LBdrive.setPower(LBpower * fastency);
-            RFdrive.setPower(RFpower * fastency);
+            LFdrive.setPower(-LFpower * fastency);
+            RBdrive.setPower(-RBpower * fastency);
+            LBdrive.setPower(-LBpower * fastency);
+            RFdrive.setPower(-RFpower * fastency);
 
             telemetry.addData("LB",LBpower);
             telemetry.addData("LF",LFpower);
