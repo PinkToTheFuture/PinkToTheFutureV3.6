@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp(name="Scrimmage Robot met fcd", group="PinktotheFuture")
+@TeleOp(name="Opendag Robot met fcd", group="PinktotheFuture")
 public class DemoRobot1 extends LinearOpMode {
     bno055driver imu2; //to use the second, custom imu driver
     BNO055IMU imu; // to use the official imu driver
@@ -30,7 +30,6 @@ public class DemoRobot1 extends LinearOpMode {
 
 
         imu2 = new bno055driver("IMU", hardwareMap);
-
 
 
         DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
@@ -68,10 +67,10 @@ public class DemoRobot1 extends LinearOpMode {
             double temp;
 
             //double max = Math.abs(LFpower);
-            double theta = (imu2.getAngles()[1]);
+            double theta = (imu2.getAngles()[2]);
 
-            double forward = -gamepad1.left_stick_y;
-            double strafe = gamepad1.left_stick_x;
+            double forward = gamepad1.left_stick_y;
+            double strafe = -gamepad1.left_stick_x;
             double rcw = gamepad1.right_stick_x;
 
 
