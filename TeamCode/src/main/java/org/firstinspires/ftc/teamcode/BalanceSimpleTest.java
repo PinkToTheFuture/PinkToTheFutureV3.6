@@ -84,8 +84,8 @@ public class BalanceSimpleTest extends LinearOpMode {
         derivative1 = error1 - lasterror1;
         derivative2 = error2 - lasterror2;
 
-        double correction1;
-        double correction2;
+        double correction1; //value for the motors from the pitch value
+        double correction2; //value for the motors from the roll value
 
         correction1 = Kp1*error1 + Ki1*integral1 + Kd1*derivative1;
         correction2 = Kp2*error2 + Ki2*integral2 + Kd2*derivative2;
