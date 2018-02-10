@@ -8,13 +8,14 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 /**
  * Created by seb7 on 1/28/2018.
  */
-@Autonomous(name="Scrimmage Auto en Tele", group ="Concept")
+@Autonomous(name="Scrimmage Auto", group ="Concept")
 
 public class Scrimmage extends LinearOpMode {
     Drive_Robot_Omni drive = new Drive_Robot_Omni();
     AutonomousVoids voids = new AutonomousVoids();
 
     public void Forward(double omw, double pwr) {
+
         boolean loop = true;
         DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
         DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
@@ -89,10 +90,6 @@ public class Scrimmage extends LinearOpMode {
 
         waitForStart();
         Forward(320 , .3);
-
-
-
-
 
 
     }

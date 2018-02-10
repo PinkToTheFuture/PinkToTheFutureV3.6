@@ -42,23 +42,55 @@ public class BalanceSimpleTest extends LinearOpMode {
 
         imu = new bno055driver("IMU", hardwareMap);
 
-        double Pitchv = 17;     //pitch value
-        double Rollv = 10;     //roll value
+        double Pitchv = 17;     //pitch value (change to 1 to test PID)
+        double Rollv = 10;     //roll value (change to 1 to test PID)
 
         double LFpower = 0;
         double RFpower = 0;
         double LBpower = 0;
         double RBpower = 0;
 
-        double Kp = 0;
-        double Ki = 0;
-        double Kd = 0;
+        //The PID controlller:
 
-        double error;
+        double Kp1 = 1;
+        double Ki1 = 1;
+        double Kd1 = 1;
 
-        double Sp;
-        double Pv;
+        double Kp2 = 1;
+        double Ki2 = 1;
+        double Kd2 = 1;
 
+        double error1;
+        double error2;
+
+        double Sp = 0;
+        double Pv1 = imu.getAngles()[1];
+        double Pv2 = imu.getAngles()[2];
+
+        double integral1 = 0;
+        double integral2 = 0;
+        double derivative1;
+        double derivative2;
+
+
+        error1 = Sp - Pv1;
+        error2 = Sp - Pv2;
+
+        integral1 = error1 + integral1;
+
+        double lasterror1 = error1;
+        double lasterror2 = error2;
+
+        derivative1 = error1 - lasterror1;
+        derivative2 = error2 - lasterror2;
+
+        double correction1;
+        double correction2;
+
+        correction1 = Kp1*error1 + Ki1*integral1 + Kd1*derivative1;
+        correction2 = Kp2*error2 + Ki2*integral2 + Kd2*derivative2;
+
+        //End of PID controller
 
         telemetry.addLine("ready to start");
         telemetry.update();
@@ -69,10 +101,10 @@ public class BalanceSimpleTest extends LinearOpMode {
         while (opModeIsActive()) {
 
 
-            RFpower = ((((-imu.getAngles()[1])/Pitchv) + (imu.getAngles()[2]/Rollv)) / 2);
-            RBpower = ((((-imu.getAngles()[1])/Pitchv) - (imu.getAngles()[2]/Rollv)) / 2);
-            LFpower = ((((-imu.getAngles()[1])/Pitchv) - (imu.getAngles()[2]/Rollv)) / 2);
-            LBpower = ((((-imu.getAngles()[1])/Pitchv) + (imu.getAngles()[2]/Rollv)) / 2);
+            RFpower = ((((-correction1/Pitchv) + (correction2/Rollv)) / 2));
+            RBpower = ((((-correction1/Pitchv) - (correction2/Rollv)) / 2));
+            LFpower = ((((-correction1/Pitchv) - (correction2/Rollv)) / 2));
+            LBpower = ((((-correction2/Pitchv) + (correction2/Rollv)) / 2));
 
             //RIGHT STICK
 

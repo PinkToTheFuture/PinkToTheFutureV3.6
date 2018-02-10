@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
 import com.qualcomm.robotcore.util.Range;
 
-@Disabled
+
 @TeleOp(name="OmniFieldCentricDriveV3", group="PinktotheFuture")
 public class OmniFieldCentricDriveV3 extends LinearOpMode {
     bno055driver imu2;
@@ -66,7 +66,7 @@ public class OmniFieldCentricDriveV3 extends LinearOpMode {
             double temp;
 
 
-            double theta = imu2.getAngles()[0];
+            double theta = imu2.getAngles()[2];
 
             double forward = -gamepad1.left_stick_y;
             double strafe = gamepad1.left_stick_x;
@@ -136,9 +136,7 @@ public class OmniFieldCentricDriveV3 extends LinearOpMode {
             telemetry.addData("accLin: ", imu.getLinearAcceleration());
             telemetry.addData("accOveral: ", imu.getOverallAcceleration());
 
-
-
-
+            telemetry.addData("angle: ", theta);
             telemetry.update();
 
 

@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
 import com.qualcomm.robotcore.util.Range;
 
 
-@Disabled
+
 @TeleOp(name="SelfCorrectingMecanum", group="PinktotheFuture")
 public class SelfCorrectingMecanum extends LinearOpMode {
     bno055driver imu2; //to use the second, custom imu driver
