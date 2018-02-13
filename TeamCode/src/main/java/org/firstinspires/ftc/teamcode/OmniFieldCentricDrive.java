@@ -25,10 +25,6 @@ public class OmniFieldCentricDrive extends LinearOpMode {
         double fastency = 1;
 
 
-
-
-
-
         DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
         DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
         DcMotor LBdrive = hardwareMap.dcMotor.get("LBdrive");

@@ -66,7 +66,7 @@ public class OmniFieldCentricDriveV3 extends LinearOpMode {
             double temp;
 
 
-            double theta = imu2.getAngles()[2];
+            double theta = imu2.getAngles()[0];
 
             double forward = -gamepad1.left_stick_y;
             double strafe = gamepad1.left_stick_x;
@@ -131,10 +131,11 @@ public class OmniFieldCentricDriveV3 extends LinearOpMode {
             telemetry.addData("LF",Math.round(LFpower));
             telemetry.addData("RB",Math.round(RBpower));
             telemetry.addData("RF",Math.round(RFpower));
-            */
+
             telemetry.addData("acc: ", imu.getAcceleration());
             telemetry.addData("accLin: ", imu.getLinearAcceleration());
             telemetry.addData("accOveral: ", imu.getOverallAcceleration());
+            */
 
             telemetry.addData("angle: ", theta);
             telemetry.update();
