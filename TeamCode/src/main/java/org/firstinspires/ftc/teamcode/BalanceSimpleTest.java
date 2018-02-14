@@ -60,13 +60,13 @@ public class BalanceSimpleTest extends LinearOpMode {
 
             //The PID controlller:
 
-            double Kp1 = 1;
-            double Ki1 = 1;
-            double Kd1 = 1;
+            double Kp1 = 2;
+            double Ki1 = 2;
+            double Kd1 = 2;
 
-            double Kp2 = 1;
-            double Ki2 = 1;
-            double Kd2 = 1;
+            double Kp2 = 2;
+            double Ki2 = 2;
+            double Kd2 = 2;
 
             double error1;
             double error2;
@@ -100,10 +100,10 @@ public class BalanceSimpleTest extends LinearOpMode {
 
             //End of PID controller
 
-            RFpower = ((((-correction1/Pitchv) + (correction2/Rollv)) / 2));
-            RBpower = ((((-correction1/Pitchv) - (correction2/Rollv)) / 2));
-            LFpower = ((((-correction1/Pitchv) - (correction2/Rollv)) / 2));
-            LBpower = ((((-correction1/Pitchv) + (correction2/Rollv)) / 2));
+            RFpower = -((((-correction1/Pitchv) + (correction2/Rollv)) / 2));
+            RBpower = -((((-correction1/Pitchv) - (correction2/Rollv)) / 2));
+            LFpower = -((((-correction1/Pitchv) - (correction2/Rollv)) / 2));
+            LBpower = -((((-correction1/Pitchv) + (correction2/Rollv)) / 2));
 
             //RIGHT STICK
 
@@ -112,10 +112,10 @@ public class BalanceSimpleTest extends LinearOpMode {
             Range.clip(LFpower, -1, 1);
             Range.clip(LBpower, -1, 1);
 
-            LFdrive.setPower(LFpower*2);
-            RFdrive.setPower(RFpower*2);
-            LBdrive.setPower(LBpower*2);
-            RBdrive.setPower(RBpower*2);
+            LFdrive.setPower(LFpower);
+            RFdrive.setPower(RFpower);
+            LBdrive.setPower(LBpower);
+            RBdrive.setPower(RBpower);
 
             //telemetry.addLine("Pitch: " + (imu.getAngles()[1])); //pitch
             //telemetry.addLine("Roll: " + (imu.getAngles()[2]));  //roll

@@ -73,9 +73,6 @@ public class SelfCorrectingMecanum extends LinearOpMode {
             double rcw = gamepad1.right_stick_x;
 
 
-
-
-
             if (Math.abs(gamepad1.left_stick_x) > 0 || Math.abs(gamepad1.left_stick_y) > 0 || Math.abs(gamepad1.right_stick_x) > 0 || Math.abs(gamepad1.right_stick_y) > 0 ){
                 imuArray[0] = theta;
             }
