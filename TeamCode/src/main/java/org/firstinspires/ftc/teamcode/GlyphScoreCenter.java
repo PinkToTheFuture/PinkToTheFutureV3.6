@@ -32,25 +32,8 @@ public class GlyphScoreCenter extends LinearOpMode {
 
     }
 
-    public void Glyph() throws InterruptedException {
-        glyphDetector = new GlyphDetector();
-        glyphDetector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
-        glyphDetector.minScore = .5;
-        glyphDetector.downScaleFactor = .6;
-        glyphDetector.speed = GlyphDetector.GlyphDetectionSpeed.SLOW;
-        glyphDetector.rotateMat = true;
 
 
-    }
-
-    public void Score() throws InterruptedException {
-        Autovoids.Right_Sideways(2, .5);
-        glyphDetector.enable();
-        if (glyphDetector.getChosenGlyphOffset() > 5) {
-
-        }
-
-    }
 
 
     @Override

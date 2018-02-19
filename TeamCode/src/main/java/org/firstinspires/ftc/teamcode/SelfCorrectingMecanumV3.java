@@ -68,6 +68,7 @@ public class SelfCorrectingMecanumV3 extends LinearOpMode {
             if (gamepad1.dpad_right)  speed =.5;
             if (gamepad1.dpad_down)   speed = 0.3;
 
+
             double Xacc;
             Xacc = ((imu.getLinearAcceleration().xAccel)*.3);
             double Yacc;
@@ -206,6 +207,21 @@ public class SelfCorrectingMecanumV3 extends LinearOpMode {
 
             telemetry.update();
 
+
+            /*telemetry.addData("Yaw(rad): ", theta);
+            telemetry.addData("Yaw(deg): ", theta*180/Math.PI);
+            telemetry.addData("temp", forward);
+            telemetry.addData("strafe: ", strafe);
+
+            telemetry.addData("LB",Math.round(LBpower));
+            telemetry.addData("LF",Math.round(LFpower));
+            telemetry.addData("RB",Math.round(RBpower));
+            telemetry.addData("RF",Math.round(RFpower));
+
+            telemetry.addData("acc: ", imu.getAcceleration());
+            telemetry.addData("accLin: ", imu.getLinearAcceleration());
+            telemetry.addData("accOveral: ", imu.getOverallAcceleration());
+            */
 
         }
     }

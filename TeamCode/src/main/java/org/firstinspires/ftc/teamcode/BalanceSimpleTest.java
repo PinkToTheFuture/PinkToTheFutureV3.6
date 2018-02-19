@@ -64,9 +64,9 @@ public class BalanceSimpleTest extends LinearOpMode {
             double Ki1 = 2;
             double Kd1 = 2;
 
-            double Kp2 = 2;
-            double Ki2 = 2;
-            double Kd2 = 2;
+            double Kp2 = 4;
+            double Ki2 = 4;
+            double Kd2 = 4;
 
             double error1;
             double error2;
@@ -85,6 +85,7 @@ public class BalanceSimpleTest extends LinearOpMode {
             error2 = Sp - Pv2;
 
             integral1 = error1 + integral1;
+            integral2 = error2 + integral2;
 
             double lasterror1 = error1;
             double lasterror2 = error2;
@@ -100,10 +101,10 @@ public class BalanceSimpleTest extends LinearOpMode {
 
             //End of PID controller
 
-            RFpower = -((((-correction1/Pitchv) + (correction2/Rollv)) / 2));
-            RBpower = -((((-correction1/Pitchv) - (correction2/Rollv)) / 2));
-            LFpower = -((((-correction1/Pitchv) - (correction2/Rollv)) / 2));
-            LBpower = -((((-correction1/Pitchv) + (correction2/Rollv)) / 2));
+            RFpower = ((((correction1/Pitchv) + (-correction2/Rollv)) / 2));
+            RBpower = ((((correction1/Pitchv) - (-correction2/Rollv)) / 2));
+            LFpower = ((((correction1/Pitchv) - (-correction2/Rollv)) / 2));
+            LBpower = ((((correction1/Pitchv) + (-correction2/Rollv)) / 2));
 
             //RIGHT STICK
 

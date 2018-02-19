@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -36,6 +37,8 @@ public class AutoBlueV1 extends LinearOpMode {
     private Pictographs pictographs = Pictographs.CENTER;
     public static final String TAG = "Vuforia VuMark Sample";
     ClosableVuforiaLocalizer vuforia;
+
+    AutonomousVoids Autovoids = new AutonomousVoids();
 
     VuforiaTrackable relicTemplate;
     GlyphScoreCenter glyphScoreCenter = new GlyphScoreCenter();
@@ -96,6 +99,11 @@ public class AutoBlueV1 extends LinearOpMode {
     }
 
     public void Jewels() throws InterruptedException {
+
+        Servo Jewelservo = hardwareMap.servo.get("Jewelservo");
+
+        double jewelpos = 0;
+
         jewelDetector = new JewelDetector();
         jewelDetector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
 
@@ -118,6 +126,10 @@ public class AutoBlueV1 extends LinearOpMode {
             waitOneFullHardwareCycle();
             switch (jewelDetector.getLastOrder()) {
                 case RED_BLUE:
+                    jewelpos = 1;
+                    Jewelservo.setPosition(jewelpos);
+                    sleep(1000);
+                    TurnLeft(50, .3);
                     jewelDetector.disable();
                     loop = false;
             }
@@ -139,6 +151,25 @@ public class AutoBlueV1 extends LinearOpMode {
             }
         }
     }
+
+    public void Cryptobox() throws InterruptedException {
+
+        cryptoboxDetector = new CryptoboxDetector();
+        cryptoboxDetector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
+
+        cryptoboxDetector.downScaleFactor = .9;
+        cryptoboxDetector.speed = CryptoboxDetector.CryptoboxSpeed.BALANCED;
+        cryptoboxDetector.rotateMat = true;
+
+        //Optional Test Code to load images via Drawables
+        //cryptoboxDetector.useImportedImage = true;
+        //cryptoboxDetector.SetTestMat(com.qualcomm.ftcrobotcontroller.R.drawable.test_cv4);
+
+        cryptoboxDetector.enable();
+
+    }
+
+
 
     public void Teleop() throws InterruptedException {
         double LFpower = 0;
@@ -227,16 +258,80 @@ public class AutoBlueV1 extends LinearOpMode {
         }
     }
 
+    public void TurnLeft(double omw, double pwr) throws InterruptedException {
+        boolean loop = true;
+        DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
+        DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
+        DcMotor LBdrive = hardwareMap.dcMotor.get("LBdrive");
+        DcMotor RFdrive = hardwareMap.dcMotor.get("RFdrive");
+        LFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        LBdrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        RFdrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        RBdrive.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        LFdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LBdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RFdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RBdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        idle();
+        LFdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LBdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RFdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RBdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        idle();
+
+        while (loop && opModeIsActive()){
+
+            LFdrive.setPower(pwr);
+            LBdrive.setPower(pwr);
+            RFdrive.setPower(pwr);
+            RBdrive.setPower(pwr);
+
+            LFdrive.setTargetPosition((int) omw * 1120);
+            LBdrive.setTargetPosition((int) omw * 1120);
+            RFdrive.setTargetPosition((int) omw * 1120);
+            RBdrive.setTargetPosition((int) omw * 1120);
+
+            waitOneFullHardwareCycle();
+            telemetry.addData("LFdrive", LFdrive.getCurrentPosition());
+            telemetry.addData("LBdrive", LBdrive.getCurrentPosition());
+            telemetry.addData("RFdrive", RFdrive.getCurrentPosition());
+            telemetry.addData("RBdrive", RBdrive.getCurrentPosition());
+            telemetry.update();
+
+            if (LFdrive.getCurrentPosition() > RFdrive.getCurrentPosition()){
+                LFdrive.setPower(-pwr * 0.75);
+                LBdrive.setPower(-pwr * 0.75);
+                RFdrive.setPower(pwr * 1.33);
+                RBdrive.setPower(pwr * 1.33);
+            }
+            if (LFdrive.getCurrentPosition() > RFdrive.getCurrentPosition()){
+                LFdrive.setPower(-pwr * 1.33);
+                LBdrive.setPower(-pwr * 1.33);
+                RFdrive.setPower(pwr * 0.75);
+                RBdrive.setPower(pwr * 0.75);
+            }
+            if (LFdrive.getCurrentPosition() > (omw*11.20 - 40) && LBdrive.getCurrentPosition() > (omw*11.20 - 40) && RFdrive.getCurrentPosition() > (omw*11.20 - 40) && RBdrive.getCurrentPosition() > (omw*11.20 - 40)) {
+                loop = false;
+            }
+        }
+        LFdrive.setPower(0);
+        LBdrive.setPower(0);
+        RFdrive.setPower(0);
+        RBdrive.setPower(0);
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
 
 
         waitForStart();
-        Vumark();
         Jewels();
-        Pictographs();
-        Teleop();
+        Vumark();
+        //Pictographs();
+
+        //Teleop();
 
 
 
