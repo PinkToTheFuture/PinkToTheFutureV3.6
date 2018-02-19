@@ -13,7 +13,7 @@ public class keesznfapmachine extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         int Gpos1 = 0;
-        int Gpos2 = 1000;
+        int Gpos2 = 0;
         int hoi = 0;
         double times = getRuntime();
         boolean loop = false;
@@ -21,6 +21,8 @@ public class keesznfapmachine extends LinearOpMode {
 
         DcMotor geleider = hardwareMap.dcMotor.get("geleider");
         geleider.setDirection(DcMotorSimple.Direction.REVERSE);
+        geleider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        idle();
         geleider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         geleider.setPower(1);
         waitOneFullHardwareCycle();
@@ -31,7 +33,7 @@ public class keesznfapmachine extends LinearOpMode {
 
             if (gamepad1.dpad_up)     Gpos1 = geleider.getCurrentPosition();
             if (gamepad1.dpad_down)   Gpos2 = geleider.getCurrentPosition();
-            hoi = (int) (hoi+(gamepad1.left_stick_y*20));
+            hoi = (int) (hoi+(gamepad1.left_stick_y*40));
             if (gamepad1.a)   loop = true;
             geleider.setTargetPosition(hoi);
 
@@ -41,14 +43,14 @@ public class keesznfapmachine extends LinearOpMode {
                     if (pos){
                         geleider.setTargetPosition(Gpos1);
                         pos = false;
-                        times = times + 3;
+                        times = times + 5;
                     }
                 }
                 if (times < getRuntime()){
                     if (!pos){
                         geleider.setTargetPosition(Gpos2);
                         pos = true;
-                        times = times + 3;
+                        times = times + 5;
                     }
 
                 }
@@ -60,7 +62,8 @@ public class keesznfapmachine extends LinearOpMode {
             telemetry.addData("motor: ", geleider.getCurrentPosition());
             telemetry.addData("gpos1", Gpos1);
             telemetry.addData("gpos2", Gpos2);
-            telemetry.addData("time: ", times);
+            telemetry.addData("times: ", times);
+            telemetry.addData("gettime: ", getRuntime());
             telemetry.update();
         }
     }
