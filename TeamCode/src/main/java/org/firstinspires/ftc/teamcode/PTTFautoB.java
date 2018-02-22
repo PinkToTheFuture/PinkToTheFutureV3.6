@@ -31,7 +31,7 @@ import static com.disnodeteam.dogecv.detectors.JewelDetector.JewelDetectionMode.
 
 @Autonomous(name="OpMode Pink To The Future", group ="Concept")
 
-public class AutoBlueV1 extends LinearOpMode {
+public class PTTFautoB extends LinearOpMode {
 
     private JewelDetector jewelDetector = null;
     private Pictographs pictographs = Pictographs.CENTER;
@@ -134,8 +134,8 @@ public class AutoBlueV1 extends LinearOpMode {
                     Jewelservo.setPosition(0);
                     telemetry.addLine("Servo");
                     telemetry.update();
-                    sleep(3000);
-                    //TurnLeft(400, .05);
+                    sleep(2000);
+                    TurnLeft(1, .05);
                     jewelDetector.disable();
                     loop = false;
             }
@@ -286,14 +286,12 @@ public class AutoBlueV1 extends LinearOpMode {
 
         while (loop && opModeIsActive()){
 
-
-
             LFdrive.setPower(pwr);
             LBdrive.setPower(pwr);
             RFdrive.setPower(-pwr);
             RBdrive.setPower(-pwr);
 
-            LFdrive.setTargetPosition(encv);
+            LFdrive.setTargetPosition(encv);     //537.6
             LBdrive.setTargetPosition(encv);
             RFdrive.setTargetPosition(encv);
             RBdrive.setTargetPosition(encv);
@@ -305,8 +303,6 @@ public class AutoBlueV1 extends LinearOpMode {
             telemetry.addData("RFdrive", RFdrive.getCurrentPosition());
             telemetry.addData("RBdrive", RBdrive.getCurrentPosition());
             telemetry.update();
-
-            //loop = false;
 
 
             /*
@@ -322,10 +318,12 @@ public class AutoBlueV1 extends LinearOpMode {
                 RFdrive.setPower(pwr * 0.75);
                 RBdrive.setPower(pwr * 0.75);
             }
+            */
 
-            if (LFdrive.getCurrentPosition() >=encv && LBdrive.getCurrentPosition() >= encv && RFdrive.getCurrentPosition() >= encv && RBdrive.getCurrentPosition() >= encv) {
-                loop = false;
-            }*/
+            if (LFdrive.getCurrentPosition() > ((encv) - 40) && LBdrive.getCurrentPosition() > ((encv) - 40) && RFdrive.getCurrentPosition() > ((encv) - 40) && RBdrive.getCurrentPosition() > ((encv) - 40)) {
+                sleep(500);
+                loop=false;
+            }
         }
         LFdrive.setPower(0);
         LBdrive.setPower(0);
@@ -355,8 +353,6 @@ public class AutoBlueV1 extends LinearOpMode {
 
             loop=false;
         }
-
-
     }
 
 
@@ -368,7 +364,6 @@ public class AutoBlueV1 extends LinearOpMode {
         Jewels();
         Vumark();
         //Pictographs();
-
         //Teleop();
 
 

@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.Range;
 
 
 @TeleOp(name="PWS AVOND", group="PinktotheFuture")
-public class OmniFieldCentricDriveV3 extends LinearOpMode {
+public class PWSavond extends LinearOpMode {
     bno055driver imu2;
     BNO055IMU imu;
 
@@ -67,9 +67,16 @@ public class OmniFieldCentricDriveV3 extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-            if (gamepad1.dpad_up)     speed = 1;
-            if (gamepad1.dpad_right) speed =.6;
-            if (gamepad1.dpad_down)   speed = 0.4;
+
+            RBdrive.setDirection(DcMotorSimple.Direction.FORWARD);
+            RFdrive.setDirection(DcMotorSimple.Direction.FORWARD);
+            LBdrive.setDirection(DcMotorSimple.Direction.REVERSE);
+            LFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
+
+            speed=1;
+            if (gamepad1.dpad_up)       speed = speed+.2;
+            if (gamepad1.dpad_right)    speed =1;
+            if (gamepad1.dpad_down)     speed = speed-.2;
 
             if (gamepad2.a) {
                 jewelpos =1;
@@ -167,17 +174,17 @@ public class OmniFieldCentricDriveV3 extends LinearOpMode {
 
                 //The PID controlller:
 
-                double Pitchv = 1;     //pitch value (change to 1 to test PID)
-                double Rollv = 1;     //roll value (change to 1 to test PID)
+                //double Pitchv = 1;     //pitch value (change to 1 to test PID)
+                //double Rollv = 1;     //roll value (change to 1 to test PID)
 
 
                 double Kp1 = 2;
                 double Ki1 = 2;
                 double Kd1 = 2;
 
-                double Kp2 = 4;
-                double Ki2 = 4;
-                double Kd2 = 4;
+                double Kp2 = 2;
+                double Ki2 = 2;
+                double Kd2 = 2;
 
                 double error1;
                 double error2;
@@ -212,10 +219,10 @@ public class OmniFieldCentricDriveV3 extends LinearOpMode {
 
                 //End of PID controller
 
-                RFpower = ((((correction1 / Pitchv) + (-correction2 / Rollv)) / 2));
-                RBpower = ((((correction1 / Pitchv) - (-correction2 / Rollv)) / 2));
-                LFpower = ((((correction1 / Pitchv) - (-correction2 / Rollv)) / 2));
-                LBpower = ((((correction1 / Pitchv) + (-correction2 / Rollv)) / 2));
+                RFpower = ((((correction1) + (-correction2)) / 2));
+                RBpower = ((((correction1) - (-correction2)) / 2));
+                LFpower = ((((correction1) - (-correction2)) / 2));
+                LBpower = ((((correction1) + (-correction2)) / 2));
 
                 //RIGHT STICK
 
