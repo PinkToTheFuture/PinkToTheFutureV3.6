@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp(name="pttf fcd en balance", group="PinktotheFuture")
+@TeleOp(name="PWS AVOND", group="PinktotheFuture")
 public class OmniFieldCentricDriveV3 extends LinearOpMode {
     bno055driver imu2;
     BNO055IMU imu;
@@ -26,10 +26,16 @@ public class OmniFieldCentricDriveV3 extends LinearOpMode {
         double RFpower = 0;
         double RBpower = 0;
 
+        double jewelpos =0;
+
+        boolean correcting = false;
+
         DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
         DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
         DcMotor LBdrive = hardwareMap.dcMotor.get("LBdrive");
         DcMotor RFdrive = hardwareMap.dcMotor.get("RFdrive");
+
+        Servo Jewelservo = hardwareMap.servo.get("Jewelservo");
 
         //RFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
         //RBdrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -44,6 +50,9 @@ public class OmniFieldCentricDriveV3 extends LinearOpMode {
 
         //rcw = rcw*K1;
 
+        Double[] imuArray;
+        imuArray = new Double[1];
+        imuArray[0] = 0.0;
 
         imu2 = new bno055driver("IMU", hardwareMap);
         imu = hardwareMap.get(BNO055IMU.class, "IMU");
@@ -62,6 +71,13 @@ public class OmniFieldCentricDriveV3 extends LinearOpMode {
             if (gamepad1.dpad_right) speed =.6;
             if (gamepad1.dpad_down)   speed = 0.4;
 
+            if (gamepad2.a) {
+                jewelpos =1;
+            }
+            if (gamepad2.b) {
+                jewelpos =0;
+            }
+
             double temp;
 
 
@@ -70,6 +86,20 @@ public class OmniFieldCentricDriveV3 extends LinearOpMode {
             double forward = -gamepad1.left_stick_y;
             double strafe = gamepad1.left_stick_x;
             double rcw = gamepad1.right_stick_x;
+
+            if (Math.abs(gamepad1.left_stick_x) > 0 || Math.abs(gamepad1.left_stick_y) > 0 || Math.abs(gamepad1.right_stick_x) > 0 || Math.abs(gamepad1.right_stick_y) > 0 ){
+                imuArray[0] = theta;
+            }
+
+            double oldAngle = imuArray[0]*180/Math.PI;
+            double newAngle = theta*180/Math.PI;
+
+            double rawDiff = oldAngle > newAngle ? oldAngle - newAngle : newAngle - oldAngle;
+
+
+            if (theta < 0){
+                rawDiff = rawDiff * -1;
+            }
 
             if (theta >0) {
                 temp = forward*Math.cos(theta)-strafe*Math.sin(theta);
@@ -81,6 +111,26 @@ public class OmniFieldCentricDriveV3 extends LinearOpMode {
                 temp = forward*Math.cos(theta)-strafe*Math.sin(theta);
                 strafe = forward*Math.sin(theta)+strafe*Math.cos(theta);
                 forward = temp;
+            }
+
+            if (Math.abs(gamepad1.left_stick_x) == 0 && Math.abs(gamepad1.left_stick_y) == 0 && Math.abs(gamepad1.right_stick_x) ==  0 && Math.abs(gamepad1.right_stick_y) == 0){
+                if (rawDiff > 5.0){
+                    LFpower = 0.2;
+                    LBpower = 0.2;
+                    RFpower = -0.2;
+                    RBpower = -0.2;
+                }
+
+                if (rawDiff < -5.0){
+                    LFpower = -0.2;
+                    LBpower = -0.2;
+                    RFpower = 0.2;
+                    RBpower = 0.2;
+                }
+
+                correcting = true;
+            }else{
+                correcting = false;
             }
 
             RFpower = 0;
@@ -191,9 +241,11 @@ public class OmniFieldCentricDriveV3 extends LinearOpMode {
             LBdrive.setPower(LBpower * speed);
             RFdrive.setPower(RFpower * speed);
 
-
+            Jewelservo.setPosition(jewelpos);
 
             telemetry.addData("angle: ", theta);
+            telemetry.addData("rawDiff", rawDiff);
+            telemetry.addData("correcting is:", correcting);
             telemetry.update();
 
         }

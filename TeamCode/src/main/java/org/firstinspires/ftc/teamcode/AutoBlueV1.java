@@ -98,11 +98,16 @@ public class AutoBlueV1 extends LinearOpMode {
         }
     }
 
+    public void initialisation() throws InterruptedException {
+        Servo Jewelservo = hardwareMap.servo.get("Jewelservo");
+        Jewelservo.setPosition(1);
+    }
+
     public void Jewels() throws InterruptedException {
 
         Servo Jewelservo = hardwareMap.servo.get("Jewelservo");
 
-        double jewelpos = 0;
+
 
         jewelDetector = new JewelDetector();
         jewelDetector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
@@ -126,10 +131,11 @@ public class AutoBlueV1 extends LinearOpMode {
             waitOneFullHardwareCycle();
             switch (jewelDetector.getLastOrder()) {
                 case RED_BLUE:
-                    jewelpos = 1;
-                    Jewelservo.setPosition(jewelpos);
-                    sleep(1000);
-                    TurnLeft(50, .3);
+                    Jewelservo.setPosition(0);
+                    telemetry.addLine("Servo");
+                    telemetry.update();
+                    sleep(3000);
+                    //TurnLeft(400, .05);
                     jewelDetector.disable();
                     loop = false;
             }
@@ -168,8 +174,6 @@ public class AutoBlueV1 extends LinearOpMode {
         cryptoboxDetector.enable();
 
     }
-
-
 
     public void Teleop() throws InterruptedException {
         double LFpower = 0;
@@ -258,7 +262,7 @@ public class AutoBlueV1 extends LinearOpMode {
         }
     }
 
-    public void TurnLeft(double omw, double pwr) throws InterruptedException {
+    public void TurnLeft(int encv, double pwr) throws InterruptedException {
         boolean loop = true;
         DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
         DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
@@ -274,24 +278,26 @@ public class AutoBlueV1 extends LinearOpMode {
         RFdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RBdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         idle();
+
         LFdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         LBdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         RFdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         RBdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        idle();
-
         while (loop && opModeIsActive()){
+
+
 
             LFdrive.setPower(pwr);
             LBdrive.setPower(pwr);
-            RFdrive.setPower(pwr);
-            RBdrive.setPower(pwr);
+            RFdrive.setPower(-pwr);
+            RBdrive.setPower(-pwr);
 
-            LFdrive.setTargetPosition((int) omw * 1120);
-            LBdrive.setTargetPosition((int) omw * 1120);
-            RFdrive.setTargetPosition((int) omw * 1120);
-            RBdrive.setTargetPosition((int) omw * 1120);
+            LFdrive.setTargetPosition(encv);
+            LBdrive.setTargetPosition(encv);
+            RFdrive.setTargetPosition(encv);
+            RBdrive.setTargetPosition(encv);
+            //sleep(5000);
 
             waitOneFullHardwareCycle();
             telemetry.addData("LFdrive", LFdrive.getCurrentPosition());
@@ -300,6 +306,10 @@ public class AutoBlueV1 extends LinearOpMode {
             telemetry.addData("RBdrive", RBdrive.getCurrentPosition());
             telemetry.update();
 
+            //loop = false;
+
+
+            /*
             if (LFdrive.getCurrentPosition() > RFdrive.getCurrentPosition()){
                 LFdrive.setPower(-pwr * 0.75);
                 LBdrive.setPower(-pwr * 0.75);
@@ -312,9 +322,10 @@ public class AutoBlueV1 extends LinearOpMode {
                 RFdrive.setPower(pwr * 0.75);
                 RBdrive.setPower(pwr * 0.75);
             }
-            if (LFdrive.getCurrentPosition() > (omw*11.20 - 40) && LBdrive.getCurrentPosition() > (omw*11.20 - 40) && RFdrive.getCurrentPosition() > (omw*11.20 - 40) && RBdrive.getCurrentPosition() > (omw*11.20 - 40)) {
+
+            if (LFdrive.getCurrentPosition() >=encv && LBdrive.getCurrentPosition() >= encv && RFdrive.getCurrentPosition() >= encv && RBdrive.getCurrentPosition() >= encv) {
                 loop = false;
-            }
+            }*/
         }
         LFdrive.setPower(0);
         LBdrive.setPower(0);
@@ -322,10 +333,37 @@ public class AutoBlueV1 extends LinearOpMode {
         RBdrive.setPower(0);
     }
 
+
+    public void TurnLeftTime(double pwr) throws InterruptedException {
+        boolean loop = true;
+        DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
+        DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
+        DcMotor LBdrive = hardwareMap.dcMotor.get("LBdrive");
+        DcMotor RFdrive = hardwareMap.dcMotor.get("RFdrive");
+        LFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        LBdrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        RFdrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        RBdrive.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        while (opModeIsActive()&&loop) {
+            LFdrive.setPower(pwr);
+            LBdrive.setPower(pwr);
+            RFdrive.setPower(pwr);
+            RBdrive.setPower(pwr);
+
+            sleep(1000);
+
+            loop=false;
+        }
+
+
+    }
+
+
+
     @Override
     public void runOpMode() throws InterruptedException {
-
-
+        initialisation();
         waitForStart();
         Jewels();
         Vumark();
