@@ -42,8 +42,6 @@ public class CryptoBoxFinder extends OpMode
         //cryptoboxDetector.SetTestMat(com.qualcomm.ftcrobotcontroller.R.drawable.test_cv4);
 
         cryptoboxDetector.enable();
-
-
     }
 
 

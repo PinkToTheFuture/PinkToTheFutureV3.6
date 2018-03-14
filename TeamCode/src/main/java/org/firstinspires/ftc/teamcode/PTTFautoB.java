@@ -98,7 +98,7 @@ public class PTTFautoB extends LinearOpMode {
         }
     }
 
-    public void initialisation() throws InterruptedException {
+    public void Initialisation() throws InterruptedException {
         Servo Jewelservo = hardwareMap.servo.get("Jewelservo");
         Jewelservo.setPosition(1);
     }
@@ -135,28 +135,14 @@ public class PTTFautoB extends LinearOpMode {
                     telemetry.addLine("Servo");
                     telemetry.update();
                     sleep(2000);
-                    TurnLeft(1, .05);
+                    TurnLeft(1, .3);
                     jewelDetector.disable();
                     loop = false;
             }
         }
     }
 
-    public void Pictographs() throws InterruptedException {
-        boolean loop = true;
-        while (opModeIsActive()&&loop) {
-            if (pictographs == Pictographs.LEFT) {
-                loop=false;
-            }
-            if (pictographs == Pictographs.CENTER) {
-                //glyphScoreCenter.Score();
-                loop=false;
-            }
-            if (pictographs == Pictographs.RIGHT) {
-                loop=false;
-            }
-        }
-    }
+
 
     public void Cryptobox() throws InterruptedException {
 
@@ -172,6 +158,28 @@ public class PTTFautoB extends LinearOpMode {
         //cryptoboxDetector.SetTestMat(com.qualcomm.ftcrobotcontroller.R.drawable.test_cv4);
 
         cryptoboxDetector.enable();
+
+        boolean loop = true;
+        while (opModeIsActive()&& loop) {
+            if (cryptoboxDetector.isCryptoBoxDetected()) {
+                if (pictographs == Pictographs.LEFT) {
+                    cryptoboxDetector.getCryptoBoxLeftPosition();
+                    StrafeRight(3, .3);
+                    loop=false;
+                }
+                if (pictographs == Pictographs.CENTER) {
+                    cryptoboxDetector.getCryptoBoxCenterPosition();
+                    StrafeRight(3, .3);
+                    loop=false;
+                }
+                if (pictographs == Pictographs.RIGHT) {
+                    cryptoboxDetector.getCryptoBoxRightPosition();
+                    StrafeRight(3, .3);
+                    loop=false;
+                }
+            }
+        }
+
 
     }
 
@@ -262,8 +270,9 @@ public class PTTFautoB extends LinearOpMode {
         }
     }
 
-    public void TurnLeft(int encv, double pwr) throws InterruptedException {
+    public void TurnLeft(double rot, double pwr) throws InterruptedException {
         boolean loop = true;
+        int encv = (int) Math.round(rot*537.5);
         DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
         DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
         DcMotor LBdrive = hardwareMap.dcMotor.get("LBdrive");
@@ -319,11 +328,16 @@ public class PTTFautoB extends LinearOpMode {
                 RBdrive.setPower(pwr * 0.75);
             }
             */
-
+            /*
             if (LFdrive.getCurrentPosition() > ((encv) - 40) && LBdrive.getCurrentPosition() > ((encv) - 40) && RFdrive.getCurrentPosition() > ((encv) - 40) && RBdrive.getCurrentPosition() > ((encv) - 40)) {
                 sleep(500);
                 loop=false;
+            }   */
+
+            if (LFdrive.getCurrentPosition() == (encv) || LBdrive.getCurrentPosition() == (encv) || RFdrive.getCurrentPosition() == (encv) || RBdrive.getCurrentPosition() == (encv))  {
+                loop=false;
             }
+
         }
         LFdrive.setPower(0);
         LBdrive.setPower(0);
@@ -331,9 +345,9 @@ public class PTTFautoB extends LinearOpMode {
         RBdrive.setPower(0);
     }
 
-
-    public void TurnLeftTime(double pwr) throws InterruptedException {
+    public void StrafeRight(double rot, double pwr) throws InterruptedException {
         boolean loop = true;
+        int encv = (int) Math.round(rot*537.5);
         DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
         DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
         DcMotor LBdrive = hardwareMap.dcMotor.get("LBdrive");
@@ -343,31 +357,77 @@ public class PTTFautoB extends LinearOpMode {
         RFdrive.setDirection(DcMotorSimple.Direction.FORWARD);
         RBdrive.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        while (opModeIsActive()&&loop) {
-            LFdrive.setPower(pwr);
+        LFdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LBdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RFdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RBdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        idle();
+
+        LFdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LBdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RFdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RBdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (loop && opModeIsActive()){
+
+            LFdrive.setPower(-pwr);
             LBdrive.setPower(pwr);
             RFdrive.setPower(pwr);
-            RBdrive.setPower(pwr);
+            RBdrive.setPower(-pwr);
 
-            sleep(1000);
+            LFdrive.setTargetPosition(encv);     //537.6
+            LBdrive.setTargetPosition(encv);
+            RFdrive.setTargetPosition(encv);
+            RBdrive.setTargetPosition(encv);
+            //sleep(5000);
 
-            loop=false;
+            waitOneFullHardwareCycle();
+            telemetry.addData("LFdrive", LFdrive.getCurrentPosition());
+            telemetry.addData("LBdrive", LBdrive.getCurrentPosition());
+            telemetry.addData("RFdrive", RFdrive.getCurrentPosition());
+            telemetry.addData("RBdrive", RBdrive.getCurrentPosition());
+            telemetry.update();
+
+
+            /*
+            if (LFdrive.getCurrentPosition() > RFdrive.getCurrentPosition()){
+                LFdrive.setPower(-pwr * 0.75);
+                LBdrive.setPower(-pwr * 0.75);
+                RFdrive.setPower(pwr * 1.33);
+                RBdrive.setPower(pwr * 1.33);
+            }
+            if (LFdrive.getCurrentPosition() > RFdrive.getCurrentPosition()){
+                LFdrive.setPower(-pwr * 1.33);
+                LBdrive.setPower(-pwr * 1.33);
+                RFdrive.setPower(pwr * 0.75);
+                RBdrive.setPower(pwr * 0.75);
+            }
+            */
+            /*
+            if (LFdrive.getCurrentPosition() > ((encv) - 40) && LBdrive.getCurrentPosition() > ((encv) - 40) && RFdrive.getCurrentPosition() > ((encv) - 40) && RBdrive.getCurrentPosition() > ((encv) - 40)) {
+                sleep(500);
+                loop=false;
+            }   */
+
+            if (LFdrive.getCurrentPosition() == (encv) || LBdrive.getCurrentPosition() == (encv) || RFdrive.getCurrentPosition() == (encv) || RBdrive.getCurrentPosition() == (encv))  {
+                loop=false;
+            }
+
         }
+        LFdrive.setPower(0);
+        LBdrive.setPower(0);
+        RFdrive.setPower(0);
+        RBdrive.setPower(0);
     }
-
-
 
     @Override
     public void runOpMode() throws InterruptedException {
-        initialisation();
+        Initialisation();
         waitForStart();
         Jewels();
         Vumark();
-        //Pictographs();
-        //Teleop();
-
-
+        Cryptobox();
+        Teleop();
 
     }
-
 }
