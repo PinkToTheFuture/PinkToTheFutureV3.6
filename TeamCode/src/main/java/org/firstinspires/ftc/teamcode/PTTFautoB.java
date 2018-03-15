@@ -153,34 +153,64 @@ public class PTTFautoB extends LinearOpMode {
         cryptoboxDetector.speed = CryptoboxDetector.CryptoboxSpeed.BALANCED;
         cryptoboxDetector.rotateMat = true;
 
+
         //Optional Test Code to load images via Drawables
         //cryptoboxDetector.useImportedImage = true;
         //cryptoboxDetector.SetTestMat(com.qualcomm.ftcrobotcontroller.R.drawable.test_cv4);
 
         cryptoboxDetector.enable();
 
+        double kp = 1;
+        double ki = 1;
+        double kd = 1;
+
+        double error;
+
+        double Sp =0;
+
+        double integral =0;
+        double derivative;
+
         boolean loop = true;
         while (opModeIsActive()&& loop) {
             if (cryptoboxDetector.isCryptoBoxDetected()) {
                 if (pictographs == Pictographs.LEFT) {
-                    cryptoboxDetector.getCryptoBoxLeftPosition();
-                    StrafeRight(3, .3);
-                    loop=false;
+                    double PvL = cryptoboxDetector.getCryptoBoxLeftPosition();
+                    error = Sp-PvL;
+                    integral = error + integral;
+                    double lasterror = error;
+                    derivative = error - lasterror;
+                    double correction = kp*error + ki*integral + kd*derivative;
+                    telemetry.addData("correction: ", correction);
+                    //StrafeRight(correction, .3);
+                    //servo glyph
                 }
                 if (pictographs == Pictographs.CENTER) {
-                    cryptoboxDetector.getCryptoBoxCenterPosition();
-                    StrafeRight(3, .3);
-                    loop=false;
+                    double PvC = cryptoboxDetector.getCryptoBoxCenterPosition();
+                    error = Sp-PvC;
+                    integral = error + integral;
+                    double lasterror = error;
+                    derivative = error - lasterror;
+                    double correction = kp*error + ki*integral + kd*derivative;
+                    telemetry.addData("correction: ", correction);
+                    //StrafeRight(correction, .3);
+                    //servo glyph
+
                 }
                 if (pictographs == Pictographs.RIGHT) {
-                    cryptoboxDetector.getCryptoBoxRightPosition();
-                    StrafeRight(3, .3);
-                    loop=false;
+                    double PvR = cryptoboxDetector.getCryptoBoxRightPosition();
+                    error = Sp-PvR;
+                    integral = error + integral;
+                    double lasterror = error;
+                    derivative = error - lasterror;
+                    double correction = kp*error + ki*integral + kd*derivative;
+                    telemetry.addData("correction: ", correction);
+                    //StrafeRight(correction, .3);
+                    //servo glyph
+
                 }
             }
         }
-
-
     }
 
     public void Teleop() throws InterruptedException {
@@ -424,10 +454,12 @@ public class PTTFautoB extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Initialisation();
         waitForStart();
-        Jewels();
+        //Jewels();
         Vumark();
         Cryptobox();
-        Teleop();
+        //Teleop();
+
+
 
     }
 }

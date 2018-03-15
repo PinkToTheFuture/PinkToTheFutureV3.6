@@ -19,7 +19,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Func;
 
 @TeleOp(name = "Balance PID", group = "TeleOp")
-public class BalanceSimpleTest extends LinearOpMode {
+public class BalancePID extends LinearOpMode {
     //Motors
     private DcMotor LFdrive;
     private DcMotor LBdrive;
