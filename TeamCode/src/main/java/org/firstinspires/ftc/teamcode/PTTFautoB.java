@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.net.UrlQuerySanitizer;
+
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.detectors.CryptoboxDetector;
 import com.disnodeteam.dogecv.detectors.GlyphDetector;
@@ -34,7 +36,7 @@ import static com.disnodeteam.dogecv.detectors.JewelDetector.JewelDetectionMode.
 public class PTTFautoB extends LinearOpMode {
 
     private JewelDetector jewelDetector = null;
-    private Pictographs pictographs = Pictographs.CENTER;
+    public Pictographs pictographs;
     public static final String TAG = "Vuforia VuMark Sample";
     ClosableVuforiaLocalizer vuforia;
 
@@ -143,7 +145,6 @@ public class PTTFautoB extends LinearOpMode {
     }
 
 
-
     public void Cryptobox() throws InterruptedException {
 
         cryptoboxDetector = new CryptoboxDetector();
@@ -151,64 +152,72 @@ public class PTTFautoB extends LinearOpMode {
 
         cryptoboxDetector.downScaleFactor = .9;
         cryptoboxDetector.speed = CryptoboxDetector.CryptoboxSpeed.BALANCED;
-        cryptoboxDetector.rotateMat = true;
-
-
+        cryptoboxDetector.rotateMat = false;
         //Optional Test Code to load images via Drawables
         //cryptoboxDetector.useImportedImage = true;
         //cryptoboxDetector.SetTestMat(com.qualcomm.ftcrobotcontroller.R.drawable.test_cv4);
 
         cryptoboxDetector.enable();
 
-        double kp = 1;
-        double ki = 1;
-        double kd = 1;
-
+        double correction;
+        double PvL;
+        double PvC;
+        double PvR;
         double error;
+        double lasterror;
+        double deriavtive;
+        double integral = 0;
 
-        double Sp =0;
+        double Kp =.001;
+        double Ki =.001;
+        double Kd =.001;
 
-        double integral =0;
-        double derivative;
+        double Sp = 500;
 
         boolean loop = true;
         while (opModeIsActive()&& loop) {
-            if (cryptoboxDetector.isCryptoBoxDetected()) {
+            if (cryptoboxDetector.isColumnDetected()) {
                 if (pictographs == Pictographs.LEFT) {
-                    double PvL = cryptoboxDetector.getCryptoBoxLeftPosition();
+                    PvL = cryptoboxDetector.getCryptoBoxLeftPosition();
                     error = Sp-PvL;
                     integral = error + integral;
-                    double lasterror = error;
-                    derivative = error - lasterror;
-                    double correction = kp*error + ki*integral + kd*derivative;
+                    lasterror = error;
+                    deriavtive = error - lasterror;
+                    correction = (Kp*error + Ki*integral + Kd*deriavtive)/1000;
+                    telemetry.addData("picto: ", pictographs);
                     telemetry.addData("correction: ", correction);
+                    telemetry.update();
                     //StrafeRight(correction, .3);
                     //servo glyph
                 }
                 if (pictographs == Pictographs.CENTER) {
-                    double PvC = cryptoboxDetector.getCryptoBoxCenterPosition();
+                    PvC = cryptoboxDetector.getCryptoBoxCenterPosition();
                     error = Sp-PvC;
                     integral = error + integral;
-                    double lasterror = error;
-                    derivative = error - lasterror;
-                    double correction = kp*error + ki*integral + kd*derivative;
+                    lasterror = error;
+                    deriavtive = error - lasterror;
+                    correction = (Kp*error + Ki*integral + Kd*deriavtive)/1000;
+                    telemetry.addData("picto: ", pictographs);
                     telemetry.addData("correction: ", correction);
+                    telemetry.update();
                     //StrafeRight(correction, .3);
                     //servo glyph
-
                 }
                 if (pictographs == Pictographs.RIGHT) {
-                    double PvR = cryptoboxDetector.getCryptoBoxRightPosition();
+                    PvR = cryptoboxDetector.getCryptoBoxRightPosition();
                     error = Sp-PvR;
                     integral = error + integral;
-                    double lasterror = error;
-                    derivative = error - lasterror;
-                    double correction = kp*error + ki*integral + kd*derivative;
+                    lasterror = error;
+                    deriavtive = error - lasterror;
+                    correction = (Kp*error + Ki*integral + Kd*deriavtive)/1000;
+                    telemetry.addData("picto: ", pictographs);
                     telemetry.addData("correction: ", correction);
+                    telemetry.update();
                     //StrafeRight(correction, .3);
                     //servo glyph
 
                 }
+
             }
         }
     }
@@ -411,6 +420,7 @@ public class PTTFautoB extends LinearOpMode {
             RBdrive.setTargetPosition(encv);
             //sleep(5000);
 
+
             waitOneFullHardwareCycle();
             telemetry.addData("LFdrive", LFdrive.getCurrentPosition());
             telemetry.addData("LBdrive", LBdrive.getCurrentPosition());
@@ -450,12 +460,70 @@ public class PTTFautoB extends LinearOpMode {
         RBdrive.setPower(0);
     }
 
+    public void StrafeLeft (double rot, double pwr) throws InterruptedException {
+        boolean loop = true;
+        int encv = (int) Math.round(rot*537.5);
+        DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
+        DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
+        DcMotor LBdrive = hardwareMap.dcMotor.get("LBdrive");
+        DcMotor RFdrive = hardwareMap.dcMotor.get("RFdrive");
+        LFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        LBdrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        RFdrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        RBdrive.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        LFdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LBdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RFdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RBdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        idle();
+
+        LFdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LBdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RFdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RBdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (loop && opModeIsActive()){
+
+            LFdrive.setPower(-pwr);
+            LBdrive.setPower(pwr);
+            RFdrive.setPower(pwr);
+            RBdrive.setPower(-pwr);
+
+            LFdrive.setTargetPosition(encv);     //537.6
+            LBdrive.setTargetPosition(encv);
+            RFdrive.setTargetPosition(encv);
+            RBdrive.setTargetPosition(encv);
+
+            waitOneFullHardwareCycle();
+            telemetry.addData("LFdrive", LFdrive.getCurrentPosition());
+            telemetry.addData("LBdrive", LBdrive.getCurrentPosition());
+            telemetry.addData("RFdrive", RFdrive.getCurrentPosition());
+            telemetry.addData("RBdrive", RBdrive.getCurrentPosition());
+            telemetry.update();
+
+            if (LFdrive.getCurrentPosition() == (encv) || LBdrive.getCurrentPosition() == (encv) || RFdrive.getCurrentPosition() == (encv) || RBdrive.getCurrentPosition() == (encv))  {
+                loop=false;
+            }
+
+        }
+        LFdrive.setPower(0);
+        LBdrive.setPower(0);
+        RFdrive.setPower(0);
+        RBdrive.setPower(0);
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
-        Initialisation();
+        /**
+         * Change voids depending on alliance and starting position:
+         * */
+        //Initialisation();
         waitForStart();
         //Jewels();
+        //StrafeRight(3, .3);
         Vumark();
+        //StrafeRight(2, .3);
         Cryptobox();
         //Teleop();
 

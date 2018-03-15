@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.io.IOException;
 
-@Disabled
+
 @TeleOp(name="CryptoBoxFinder", group="DogeCV")
 
 public class CryptoBoxFinder extends OpMode
@@ -35,7 +35,7 @@ public class CryptoBoxFinder extends OpMode
         cryptoboxDetector.downScaleFactor = .9;
 
         cryptoboxDetector.speed = CryptoboxDetector.CryptoboxSpeed.SLOW;
-        cryptoboxDetector.rotateMat = true;
+        cryptoboxDetector.rotateMat = false;
 
         //Optional Test Code to load images via Drawables
         //cryptoboxDetector.useImportedImage = true;
