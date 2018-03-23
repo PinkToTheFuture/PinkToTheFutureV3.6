@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp(name="PWS AVOND", group="PinktotheFuture")
-public class PWSavond extends LinearOpMode {
+@TeleOp(name="scrimmagenaald V2", group="PinktotheFuture")
+public class scrimmagenaaldV2 extends LinearOpMode {
     bno055driver imu2;
     BNO055IMU imu;
 
@@ -26,16 +26,25 @@ public class PWSavond extends LinearOpMode {
         double RFpower = 0;
         double RBpower = 0;
 
-        double jewelpos =0;
-
         boolean correcting = false;
+
+        Servo moverelic = hardwareMap.servo.get("moverelic");
+        Servo grabrelic = hardwareMap.servo.get("grabrelic");
+        Servo bakjeturn = hardwareMap.servo.get("bakjeturn");
+        Servo bakjedicht = hardwareMap.servo.get("bakjedicht");
+
+        DcMotor intakeR = hardwareMap.dcMotor.get("intaker");
+        DcMotor intakeL = hardwareMap.dcMotor.get("intakel");
+        DcMotor relic = hardwareMap.dcMotor.get("relic");
+        relic.setDirection(DcMotorSimple.Direction.REVERSE);
+        DcMotor bak = hardwareMap.dcMotor.get("bak");
 
         DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
         DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
         DcMotor LBdrive = hardwareMap.dcMotor.get("LBdrive");
         DcMotor RFdrive = hardwareMap.dcMotor.get("RFdrive");
 
-        Servo Jewelservo = hardwareMap.servo.get("Jewelservo");
+
 
         //RFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
         //RBdrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -73,17 +82,11 @@ public class PWSavond extends LinearOpMode {
             LBdrive.setDirection(DcMotorSimple.Direction.REVERSE);
             LFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
-            speed=1;
+
             if (gamepad1.dpad_up)       speed = speed+.2;
             if (gamepad1.dpad_right)    speed =1;
             if (gamepad1.dpad_down)     speed = speed-.2;
 
-            if (gamepad2.a) {
-                jewelpos =1;
-            }
-            if (gamepad2.b) {
-                jewelpos =0;
-            }
 
             double temp;
 
@@ -158,7 +161,7 @@ public class PWSavond extends LinearOpMode {
             RBpower = forward-rcw+strafe;
 
 
-            if (gamepad1.b) {
+            if (!gamepad1.b) {
                 LFdrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 RBdrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 LBdrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -177,8 +180,6 @@ public class PWSavond extends LinearOpMode {
                 RFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
                 LBdrive.setDirection(DcMotorSimple.Direction.FORWARD);
                 LFdrive.setDirection(DcMotorSimple.Direction.FORWARD);
-
-                //The PID controlller:
 
                 //double Pitchv = 1;     //pitch value (change to 1 to test PID)
                 //double Rollv = 1;     //roll value (change to 1 to test PID)
@@ -249,12 +250,45 @@ public class PWSavond extends LinearOpMode {
             Range.clip(LBpower, -1, 1);
 
 
+
             LFdrive.setPower(LFpower * speed);
             RBdrive.setPower(RBpower * speed);
             LBdrive.setPower(LBpower * speed);
             RFdrive.setPower(RFpower * speed);
 
-            Jewelservo.setPosition(jewelpos);
+
+
+
+            if (gamepad2.right_bumper)  grabrelic.setPosition(0);
+            if (gamepad2.left_bumper)   grabrelic.setPosition(0.55);
+
+            if (gamepad2.dpad_up)  moverelic.setPosition(0);
+            if (gamepad2.dpad_left)  moverelic.setPosition(0.3);
+            if (gamepad2.dpad_down)  moverelic.setPosition(0.6);
+
+            if (gamepad2.a) bakjedicht.setPosition(0.2);
+            if (gamepad2.b) bakjedicht.setPosition(0.0);
+
+            if (gamepad2.x) bakjeturn.setPosition(0.3);
+            if (gamepad2.y) bakjeturn.setPosition(1);
+
+
+            if (gamepad2.left_trigger > 0.2) {
+                intakeL.setPower(gamepad2.left_trigger);
+                intakeR.setPower(-gamepad2.left_trigger);
+            } else {
+                if (gamepad2.right_trigger > 0.2) {
+                    intakeL.setPower(-gamepad2.right_trigger);
+                    intakeR.setPower(gamepad2.right_trigger);
+                } else {
+                    intakeL.setPower(0);
+                    intakeR.setPower(0);
+                }
+            }
+            relic.setPower(gamepad2.left_stick_y);
+            bak.setPower(gamepad2.right_stick_y);
+
+
 
             telemetry.addData("angle: ", theta);
             telemetry.addData("rawDiff", rawDiff);

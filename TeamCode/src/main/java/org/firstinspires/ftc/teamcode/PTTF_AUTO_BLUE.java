@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 
-@Disabled
 @Autonomous(name = "AUTO BLUE", group = "full")
 
 public class PTTF_AUTO_BLUE extends LinearOpMode implements org.firstinspires.ftc.teamcode.ServoVariables {
@@ -49,8 +48,8 @@ public class PTTF_AUTO_BLUE extends LinearOpMode implements org.firstinspires.ft
         LBdrive.setTargetPosition((int) (omw * 11.20));
         RFdrive.setTargetPosition((int) (omw * 11.20));
         RBdrive.setTargetPosition((int) (omw * 11.20));
-
         int marge = (int)((omw * 11.20) - 40);
+
 
         while (loop && opModeIsActive()){
             telemetry.addLine("forward");
@@ -60,13 +59,13 @@ public class PTTF_AUTO_BLUE extends LinearOpMode implements org.firstinspires.ft
             telemetry.addData("RBdrive", RBdrive.getCurrentPosition());
             telemetry.update();
 
-            if (LFdrive.getCurrentPosition() > RFdrive.getCurrentPosition()){
+            if (LFdrive.getCurrentPosition() < RFdrive.getCurrentPosition()){
                 LFdrive.setPower(pwr * 1.50);
                 LBdrive.setPower(pwr * 1.50);
                 RFdrive.setPower(pwr * 0.66);
                 RBdrive.setPower(pwr * 0.66);
             }
-            if (LFdrive.getCurrentPosition() > RFdrive.getCurrentPosition()){
+            if (LFdrive.getCurrentPosition() < RFdrive.getCurrentPosition()){
                 LFdrive.setPower(pwr * 0.66);
                 LBdrive.setPower(pwr * 0.66);
                 RFdrive.setPower(pwr * 1.50);
@@ -750,97 +749,22 @@ public class PTTF_AUTO_BLUE extends LinearOpMode implements org.firstinspires.ft
         RBdrive.setPower(0);
     }
 
-    /*
-    private void DriveToWall(double pwr, double afstand) throws InterruptedException {
-        UltrasonicSensor ultral = hardwareMap.ultrasonicSensor.get("ultraL");
-        UltrasonicSensor ultrar = hardwareMap.ultrasonicSensor.get("ultraR");
-
-
-        boolean loop = true;
-        DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
-        DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
-        DcMotor LBdrive = hardwareMap.dcMotor.get("LBdrive");
-        DcMotor RFdrive = hardwareMap.dcMotor.get("RFdrive");
-        LFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        LBdrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        RFdrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        RBdrive.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        LFdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        LBdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        RFdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        RBdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        idle();
-        LFdrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        LBdrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        RFdrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        RBdrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        idle();
-
-        LFdrive.setPower(pwr);
-        LBdrive.setPower(pwr);
-        RFdrive.setPower(pwr);
-        RBdrive.setPower(pwr);
-
-
-        while (loop && opModeIsActive()){
-
-            telemetry.addLine("drivetowall");
-            telemetry.addData("rrange < ", ultrar.getUltrasonicLevel());
-            telemetry.addData("lrange", ultral.getUltrasonicLevel());
-
-            telemetry.update();
-
-            if (ultrar.getUltrasonicLevel() < afstand) {
-                loop = false;
-            }
-
-
-        }
-        LFdrive.setPower(0);
-        LBdrive.setPower(0);
-        RFdrive.setPower(0);
-        RBdrive.setPower(0);
-    }
-    */
     @Override public void runOpMode() throws InterruptedException {
 
-
-        Servo Armservo = hardwareMap.servo.get("servoarm");
-        Armservo.setPosition(ArmservoStopPosition);
-
-        Servo releaseArmL = hardwareMap.servo.get("releasearmL");
-        Servo releaseArmR = hardwareMap.servo.get("releasearmR");
-        releaseArmL.setPosition(releaseArmLStartPosition);
-        releaseArmR.setPosition(releaseArmRStartPosition);
-        Servo shooterservoX = hardwareMap.servo.get("shooterservox");
-        shooterservoX.setPosition(shooterservoXStartPosition);
-
-
-        double threshold = 1.8;
-
-
-        init_gyro();
         waitForStart();
 
 
-        Forward(130, 0.5);
-        shoot();
-        Right_Gyro(46, 0.18, 0.65);
-        Forward(485, 0.6);
-        Left_Gyro(270, 0.3, 0.48);
+        DcMotor intakeR = hardwareMap.dcMotor.get("intaker");
+        DcMotor intakeL = hardwareMap.dcMotor.get("intakel");
 
-        DriveToLineRight(0.5, threshold);
+        Reverse(130, 0.1);
 
-        Reverse(60, 0.2);
-        Push1();
+        intakeR.setPower(-0.5);
+        intakeL.setPower(0.5);
+        sleep(1000);
+        intakeL.setPower(0);
+        intakeR.setPower(0);
 
-        //rij afstand, pwr, pwrmultiplier, distance muur, lightsensor threshold
-        FollowWallLeft(250, 0.7, 0.22, 17, threshold);
-        Reverse(60, 0.2);
-        Push2();
-        Left_Gyro(243, 0.5, 0.30);
-        Forward(490, 0.8);
+        Forward(30, 0.1);
     }
 }
