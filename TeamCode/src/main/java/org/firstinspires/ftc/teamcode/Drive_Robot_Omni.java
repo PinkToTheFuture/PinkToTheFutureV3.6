@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
 import com.qualcomm.robotcore.util.Range;
@@ -23,7 +24,9 @@ public class Drive_Robot_Omni extends LinearOpMode {
         double fastency = 1;
         double relicpos = 0.4;
 
-
+        DigitalChannel endbottombak = hardwareMap.get(DigitalChannel.class, "endbottombak");
+        DigitalChannel endtopbak = hardwareMap.get(DigitalChannel.class, "endtopbak");
+        endbottombak.setMode(DigitalChannel.Mode.INPUT);
 
         Servo moverelic = hardwareMap.servo.get("moverelic");
         Servo grabrelic = hardwareMap.servo.get("grabrelic");
@@ -123,8 +126,24 @@ public class Drive_Robot_Omni extends LinearOpMode {
                     intakeR.setPower(0);
                 }
             }
+
+
+            switch (endbottombak.getState() + "-" + endtopbak.getState()){
+                case "true-true":
+                    telemetry.addData("ERROR","both end stops at the same time");
+                    telemetry.update();
+                    stop();
+
+                case "true-false":
+                    bak.setPower(0.2);
+
+                case "false-true":
+                    bak.setPower(-0.2);
+                case "false-false":
+                    bak.setPower(gamepad2.right_stick_y);
+            }
+
             relic.setPower(gamepad2.left_stick_y);
-            bak.setPower(gamepad2.right_stick_y);
 
 
             telemetry.addData("LB",LBpower);
