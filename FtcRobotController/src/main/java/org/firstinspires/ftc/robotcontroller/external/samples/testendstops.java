@@ -60,7 +60,6 @@ public class testendstops extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-
         // get a reference to our digitalTouch object.
         digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalin");
 
