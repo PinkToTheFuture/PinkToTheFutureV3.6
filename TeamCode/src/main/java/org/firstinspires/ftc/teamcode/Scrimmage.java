@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @Autonomous(name="Scrimmage Auto", group ="Concept")
 
 public class Scrimmage extends LinearOpMode {
-    Drive_Robot_Omni drive = new Drive_Robot_Omni();
+    robot_nu drive = new robot_nu();
     AutonomousVoids voids = new AutonomousVoids();
 
     public void Forward(double omw, double pwr) {

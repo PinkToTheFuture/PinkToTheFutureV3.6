@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp(name="scrimmagenaald V3", group="PinktotheFuture")
-public class Drive_Robot_Omni extends LinearOpMode {
+@TeleOp(name="robot nu helemaal", group="PinktotheFuture")
+public class robot_nu extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -22,6 +22,7 @@ public class Drive_Robot_Omni extends LinearOpMode {
         double RFpower = 0;
         double RBpower = 0;
         double fastency = 1;
+        double intakefastency = 1;
         double relicpos = 0.4;
 
         DigitalChannel endbottombak = hardwareMap.get(DigitalChannel.class, "endbottombak");
@@ -46,6 +47,11 @@ public class Drive_Robot_Omni extends LinearOpMode {
 
         RFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
         RBdrive.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        RFdrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RBdrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LFdrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LBdrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //LBdrive.setDirection(DcMotorSimple.Direction.REVERSE);
         //LFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -100,11 +106,11 @@ public class Drive_Robot_Omni extends LinearOpMode {
 
 
             if (gamepad2.left_bumper)  grabrelic.setPosition(0);
-            if (gamepad2.right_bumper)   grabrelic.setPosition(0.55);
+            if (gamepad2.right_bumper)   grabrelic.setPosition(0.5);
 
 
-            if (gamepad2.dpad_up)  relicpos -= 0.002;
-            if (gamepad2.dpad_down)  relicpos += 0.002;
+            if (gamepad2.dpad_up)  relicpos -= 0.005;
+            if (gamepad2.dpad_down)  relicpos += 0.005;
             moverelic.setPosition(relicpos);
 
             if (gamepad2.a) bakjedicht.setPosition(0.2);
@@ -114,13 +120,37 @@ public class Drive_Robot_Omni extends LinearOpMode {
             if (gamepad2.y) bakjeturn.setPosition(1);
 
 
-            if (gamepad2.left_trigger > 0.2) {
-                intakeL.setPower(gamepad2.left_trigger);
-                intakeR.setPower(-gamepad2.left_trigger);
+
+            if (gamepad2.back){
+                intakefastency = 0.5;
+            }
+            if (gamepad2.start){
+                intakefastency = 1;
+            }
+            if (gamepad1.left_trigger > 0.1){
+                intakeL.setPower(gamepad1.right_trigger * intakefastency);
+                intakeR.setPower(-gamepad1.right_trigger * intakefastency);
+                //intakeR.setPower(((Math.sin(getRuntime()*4) )*0.25 + 0.75) * -gamepad1.left_trigger);
+                //intakeL.setPower(((Math.sin(getRuntime()*4) )*0.25 + 0.75) * gamepad1.left_trigger);
+                telemetry.addData("ja",intakeL.getPower());
             } else {
-                if (gamepad2.right_trigger > 0.2) {
-                    intakeL.setPower(-gamepad2.right_trigger);
-                    intakeR.setPower(gamepad2.right_trigger);
+                if (gamepad1.right_trigger > 0.1) {
+                    intakeL.setPower(-gamepad1.right_trigger * intakefastency);
+                    intakeR.setPower(gamepad1.right_trigger * intakefastency);
+                } else {
+                    intakeL.setPower(0);
+                    intakeR.setPower(0);
+                }
+            }
+
+            if (gamepad2.left_trigger > 0.1) {
+                intakeL.setPower(gamepad2.left_trigger * intakefastency);
+                intakeR.setPower(-gamepad2.left_trigger * intakefastency);
+
+            } else {
+                if (gamepad2.right_trigger > 0.1) {
+                    intakeL.setPower(-gamepad2.right_trigger * intakefastency);
+                    intakeR.setPower(gamepad2.right_trigger * intakefastency);
                 } else {
                     intakeL.setPower(0);
                     intakeR.setPower(0);
@@ -132,17 +162,19 @@ public class Drive_Robot_Omni extends LinearOpMode {
                 case "true-true":
                     telemetry.addData("ERROR","both end stops at the same time");
                     telemetry.update();
-                    stop();
+                    //stop();
 
                 case "true-false":
-                    bak.setPower(0.2);
+                    //bak.setPower(0.2);
 
                 case "false-true":
-                    bak.setPower(-0.2);
+                    //bak.setPower(-0.2);
                 case "false-false":
                     bak.setPower(gamepad2.right_stick_y);
             }
 
+
+            bak.setPower(gamepad2.right_stick_y);
             relic.setPower(gamepad2.left_stick_y);
 
 
