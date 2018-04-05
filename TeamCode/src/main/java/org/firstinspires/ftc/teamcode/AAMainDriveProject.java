@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp(name="robot nu helemaal", group="PinktotheFuture")
-public class robot_nu extends LinearOpMode {
+@TeleOp(name="PTTF main TeleOp", group="PinktotheFuture")
+public class AAMainDriveProject extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -21,13 +21,14 @@ public class robot_nu extends LinearOpMode {
         double LBpower = 0;
         double RFpower = 0;
         double RBpower = 0;
-        double fastency = 1;
-        double intakefastency = 1;
+        double speed = 1;
+        double intakespeed = 1;
         double relicpos = 0.4;
 
-        DigitalChannel endbottombak = hardwareMap.get(DigitalChannel.class, "endbottombak");
-        DigitalChannel endtopbak = hardwareMap.get(DigitalChannel.class, "endtopbak");
-        endbottombak.setMode(DigitalChannel.Mode.INPUT);
+        DigitalChannel endbottomglyph = hardwareMap.get(DigitalChannel.class, "endbottombak");
+        DigitalChannel endtopglyph = hardwareMap.get(DigitalChannel.class, "endtopbak");
+        endbottomglyph.setMode(DigitalChannel.Mode.INPUT);
+        endtopglyph.setMode(DigitalChannel.Mode.INPUT);
 
         Servo moverelic = hardwareMap.servo.get("moverelic");
         Servo grabrelic = hardwareMap.servo.get("grabrelic");
@@ -59,9 +60,9 @@ public class robot_nu extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-            if (gamepad1.dpad_up)     fastency = 1;
-            if (gamepad1.dpad_down)   fastency = 0.3;
-            if (gamepad1.dpad_left)   fastency = 0.6;
+            if (gamepad1.dpad_up)     speed = 1;
+            if (gamepad1.dpad_down)   speed = 0.3;
+            if (gamepad1.dpad_left)   speed = 0.6;
 
 
             RFpower = -((gamepad1.left_stick_y + gamepad1.left_stick_x) / 2);
@@ -96,10 +97,10 @@ public class robot_nu extends LinearOpMode {
 
 
 
-            LFdrive.setPower(-LFpower * fastency);
-            RBdrive.setPower(-RBpower * fastency);
-            LBdrive.setPower(-LBpower * fastency);
-            RFdrive.setPower(-RFpower * fastency);
+            LFdrive.setPower(-LFpower * speed);
+            RBdrive.setPower(-RBpower * speed);
+            LBdrive.setPower(-LBpower * speed);
+            RFdrive.setPower(-RFpower * speed);
 
 
             if (gamepad2.left_bumper)  grabrelic.setPosition(0);
@@ -119,21 +120,21 @@ public class robot_nu extends LinearOpMode {
 
 
             if (gamepad2.back){
-                intakefastency = 0.5;
+                intakespeed = 0.5;
             }
             if (gamepad2.start){
-                intakefastency = 1;
+                intakespeed = 1;
             }
             if (gamepad1.left_trigger > 0.1){
-                intakeL.setPower(gamepad1.right_trigger * intakefastency);
-                intakeR.setPower(-gamepad1.right_trigger * intakefastency);
+                intakeL.setPower(gamepad1.right_trigger * intakespeed);
+                intakeR.setPower(-gamepad1.right_trigger * intakespeed);
                 //intakeR.setPower(((Math.sin(getRuntime()*4) )*0.25 + 0.75) * -gamepad1.left_trigger);
                 //intakeL.setPower(((Math.sin(getRuntime()*4) )*0.25 + 0.75) * gamepad1.left_trigger);
                 telemetry.addData("ja",intakeL.getPower());
             } else {
                 if (gamepad1.right_trigger > 0.1) {
-                    intakeL.setPower(-gamepad1.right_trigger * intakefastency);
-                    intakeR.setPower(gamepad1.right_trigger * intakefastency);
+                    intakeL.setPower(-gamepad1.right_trigger * intakespeed);
+                    intakeR.setPower(gamepad1.right_trigger * intakespeed);
                 } else {
                     intakeL.setPower(0);
                     intakeR.setPower(0);
@@ -141,13 +142,13 @@ public class robot_nu extends LinearOpMode {
             }
 
             if (gamepad2.left_trigger > 0.1) {
-                intakeL.setPower(gamepad2.left_trigger * intakefastency);
-                intakeR.setPower(-gamepad2.left_trigger * intakefastency);
+                intakeL.setPower(gamepad2.left_trigger * intakespeed);
+                intakeR.setPower(-gamepad2.left_trigger * intakespeed);
 
             } else {
                 if (gamepad2.right_trigger > 0.1) {
-                    intakeL.setPower(-gamepad2.right_trigger * intakefastency);
-                    intakeR.setPower(gamepad2.right_trigger * intakefastency);
+                    intakeL.setPower(-gamepad2.right_trigger * intakespeed);
+                    intakeR.setPower(gamepad2.right_trigger * intakespeed);
                 } else {
                     intakeL.setPower(0);
                     intakeR.setPower(0);
@@ -155,7 +156,7 @@ public class robot_nu extends LinearOpMode {
             }
 
 
-            switch (endbottombak.getState() + "-" + endtopbak.getState()){
+            switch (endbottomglyph.getState() + "-" + endtopglyph.getState()){
                 case "true-true":
                     telemetry.addData("ERROR","both end stops at the same time");
                     telemetry.update();

@@ -109,9 +109,9 @@ public class scrimmagenaald extends LinearOpMode {
             if (gamepad2.right_bumper)  grabrelic.setPosition(0);
             if (gamepad2.left_bumper)   grabrelic.setPosition(0.55);
 
-            if (gamepad2.dpad_up)  moverelic.setPosition(0);
-            if (gamepad2.dpad_left)  moverelic.setPosition(0.3);
-            if (gamepad2.dpad_down)  moverelic.setPosition(0.6);
+            if (gamepad2.dpad_up)  moverelic.setPosition(0.5);
+
+            if (gamepad2.dpad_down)  moverelic.setPosition(0);
 
             if (gamepad2.a) bakjedicht.setPosition(0.2);
             if (gamepad2.b) bakjedicht.setPosition(0.0);

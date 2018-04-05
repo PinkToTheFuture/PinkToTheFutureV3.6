@@ -31,9 +31,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import static com.disnodeteam.dogecv.detectors.JewelDetector.JewelDetectionMode.PERFECT_AREA;
 
 
-@Autonomous(name="OpMode Pink To The Future", group ="Concept")
+@Autonomous(name="Main Auto Project", group ="Concept")
 
-public class PTTFautoB extends LinearOpMode {
+public class AAMainAutoProject extends LinearOpMode {
 
     private JewelDetector jewelDetector = null;
     public Pictographs pictographs;
@@ -241,53 +241,49 @@ public class PTTFautoB extends LinearOpMode {
 
         imu = new bno055driver("IMU", hardwareMap);
 
+        Double[] imuArray;
+        imuArray = new Double[1];
+        imuArray[0] = 0.0;
+
         while (opModeIsActive()) {
             if (gamepad1.dpad_up) fastency = 1;
             if (gamepad1.dpad_right) fastency = .5;
             if (gamepad1.dpad_down) fastency = 0.3;
 
-            double forward = 0;
+            double temp;
 
-            double fwd = gamepad1.left_stick_y;
-            double stf = gamepad1.left_stick_x;
-            double rcw = gamepad1.right_stick_x;
 
-            double gyroyaw = imu.getAngles()[0];
-            float temp = (float) (fwd * Math.cos(gyroyaw) + stf * Math.sin(gyroyaw));
+            double theta = imu.getAngles()[0];
 
-            stf = -fwd * Math.sin(gyroyaw) + stf * Math.cos(gyroyaw);
-            forward = temp;
+            double forward = -gamepad1.left_stick_y;
+            double strafe = gamepad1.left_stick_x;
+            double rcw = -gamepad1.right_stick_x;
 
+            if (Math.abs(gamepad1.left_stick_x) > 0 || Math.abs(gamepad1.left_stick_y) > 0 || Math.abs(gamepad1.right_stick_x) > 0 || Math.abs(gamepad1.right_stick_y) > 0 ){
+                imuArray[0] = theta;
+            }
             RFpower = 0;
             RBpower = 0;
             LFpower = 0;
             LBpower = 0;
 
-
-            RFpower = -((forward + stf) / 2);
-            RBpower = -((forward - stf) / 2);
-            LFpower = -((forward - stf) / 2);
-            LBpower = -((forward + stf) / 2);
-
-            //RIGHT STICK
-            RFpower = RFpower - (rcw);
-            RBpower = RBpower - (rcw);
-            LFpower = LFpower + (rcw);
-            LBpower = LBpower + (rcw);
-
-
-            if (stf > -0.1 && stf < 0.1) {
-                RFpower = -forward;
-                RBpower = -forward;
-                LFpower = -forward;
-                LBpower = -forward;
+            if (theta >0) {
+                temp = forward*Math.cos(theta)-strafe*Math.sin(theta);
+                strafe = forward*Math.sin(theta)+strafe*Math.cos(theta);
+                forward = temp;
             }
-            if (forward > -0.1 && forward < 0.1) {
-                RFpower = -stf;
-                RBpower = stf;
-                LFpower = stf;
-                LBpower = -stf;
+
+            if (theta <=0) {
+                temp = forward*Math.cos(theta)-strafe*Math.sin(theta);
+                strafe = forward*Math.sin(theta)+strafe*Math.cos(theta);
+                forward = temp;
             }
+
+            LFpower = forward+rcw+strafe;
+            RFpower = forward-rcw-strafe;
+            LBpower = forward+rcw-strafe;
+            RBpower = forward-rcw+strafe;
+
 
             Range.clip(RFpower, -1, 1);
             Range.clip(RBpower, -1, 1);
@@ -295,17 +291,17 @@ public class PTTFautoB extends LinearOpMode {
             Range.clip(LBpower, -1, 1);
 
 
-            LFdrive.setPower(LFpower * fastency);
-            RBdrive.setPower(RBpower * fastency);
-            LBdrive.setPower(LBpower * fastency);
-            RFdrive.setPower(RFpower * fastency);
-
-
             telemetry.addData("LB", LBpower);
             telemetry.addData("LF", LFpower);
             telemetry.addData("RB", RBpower);
             telemetry.addData("RF", RFpower);
             telemetry.update();
+
+            LFdrive.setPower(LFpower * fastency);
+            RBdrive.setPower(RBpower * fastency);
+            LBdrive.setPower(LBpower * fastency);
+            RFdrive.setPower(RFpower * fastency);
+
         }
     }
 
@@ -513,6 +509,60 @@ public class PTTFautoB extends LinearOpMode {
         RBdrive.setPower(0);
     }
 
+    public void Forward(double rot, double pwr) throws InterruptedException {
+        boolean loop = true;
+        int encv = ((int) Math.round(rot*537.5));
+        DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
+        DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
+        DcMotor LBdrive = hardwareMap.dcMotor.get("LBdrive");
+        DcMotor RFdrive = hardwareMap.dcMotor.get("RFdrive");
+        LFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        LBdrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        RFdrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        RBdrive.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        LFdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LBdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RFdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RBdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        idle();
+
+        LFdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LBdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RFdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RBdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (loop && opModeIsActive()){
+
+            LFdrive.setPower(pwr);
+            LBdrive.setPower(pwr);
+            RFdrive.setPower(pwr);
+            RBdrive.setPower(pwr);
+
+            LFdrive.setTargetPosition(encv);     //537.6
+            LBdrive.setTargetPosition(encv);
+            RFdrive.setTargetPosition(encv);
+            RBdrive.setTargetPosition(encv);
+            //sleep(5000);
+
+            waitOneFullHardwareCycle();
+            telemetry.addData("LFdrive", LFdrive.getCurrentPosition());
+            telemetry.addData("LBdrive", LBdrive.getCurrentPosition());
+            telemetry.addData("RFdrive", RFdrive.getCurrentPosition());
+            telemetry.addData("RBdrive", RBdrive.getCurrentPosition());
+            telemetry.update();
+
+            if (LFdrive.getCurrentPosition() > (encv - 10) && LBdrive.getCurrentPosition() > (encv - 10) && RFdrive.getCurrentPosition() > (encv - 40) && RBdrive.getCurrentPosition() > (encv - 10)) {
+                loop = false;
+            }
+
+        }
+        LFdrive.setPower(0);
+        LBdrive.setPower(0);
+        RFdrive.setPower(0);
+        RBdrive.setPower(0);
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
         /**
@@ -522,12 +572,14 @@ public class PTTFautoB extends LinearOpMode {
         waitForStart();
         //Jewels();
         //StrafeRight(3, .3);
-        Vumark();
+        //Vumark();
         //StrafeRight(2, .3);
-        Cryptobox();
+        //Cryptobox();
         //Teleop();
 
 
+        Forward(1,.2);
+        Teleop();
 
     }
 }
