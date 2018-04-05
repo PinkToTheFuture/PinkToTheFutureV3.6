@@ -144,7 +144,6 @@ public class AAMainAutoProject extends LinearOpMode {
         }
     }
 
-
     public void Cryptobox() throws InterruptedException {
 
         cryptoboxDetector = new CryptoboxDetector();
@@ -222,12 +221,12 @@ public class AAMainAutoProject extends LinearOpMode {
         }
     }
 
-    public void Teleop() throws InterruptedException {
-        double LFpower = 0;
-        double LBpower = 0;
-        double RFpower = 0;
-        double RBpower = 0;
-        double fastency = 1;
+    public void Teleop() throws InterruptedException{
+        double LFpower;
+        double LBpower;
+        double RFpower;
+        double RBpower;
+        double speed = 1;
 
         DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
         DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
@@ -239,6 +238,11 @@ public class AAMainAutoProject extends LinearOpMode {
         LBdrive.setDirection(DcMotorSimple.Direction.REVERSE);
         LFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        LFdrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LBdrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        RFdrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        RBdrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         imu = new bno055driver("IMU", hardwareMap);
 
         Double[] imuArray;
@@ -246,12 +250,11 @@ public class AAMainAutoProject extends LinearOpMode {
         imuArray[0] = 0.0;
 
         while (opModeIsActive()) {
-            if (gamepad1.dpad_up) fastency = 1;
-            if (gamepad1.dpad_right) fastency = .5;
-            if (gamepad1.dpad_down) fastency = 0.3;
+            if (gamepad1.dpad_up)       speed = 1;
+            if (gamepad1.dpad_right)    speed = .5;
+            if (gamepad1.dpad_down)     speed = 0.3;
 
             double temp;
-
 
             double theta = imu.getAngles()[0];
 
@@ -262,11 +265,12 @@ public class AAMainAutoProject extends LinearOpMode {
             if (Math.abs(gamepad1.left_stick_x) > 0 || Math.abs(gamepad1.left_stick_y) > 0 || Math.abs(gamepad1.right_stick_x) > 0 || Math.abs(gamepad1.right_stick_y) > 0 ){
                 imuArray[0] = theta;
             }
+            /*
             RFpower = 0;
             RBpower = 0;
             LFpower = 0;
             LBpower = 0;
-
+            */
             if (theta >0) {
                 temp = forward*Math.cos(theta)-strafe*Math.sin(theta);
                 strafe = forward*Math.sin(theta)+strafe*Math.cos(theta);
@@ -295,12 +299,13 @@ public class AAMainAutoProject extends LinearOpMode {
             telemetry.addData("LF", LFpower);
             telemetry.addData("RB", RBpower);
             telemetry.addData("RF", RFpower);
+            telemetry.addData("theta; ", theta);
             telemetry.update();
 
-            LFdrive.setPower(LFpower * fastency);
-            RBdrive.setPower(RBpower * fastency);
-            LBdrive.setPower(LBpower * fastency);
-            RFdrive.setPower(RFpower * fastency);
+            LFdrive.setPower(LFpower * speed);
+            RBdrive.setPower(RBpower * speed);
+            LBdrive.setPower(LBpower * speed);
+            RFdrive.setPower(RFpower * speed);
 
         }
     }
