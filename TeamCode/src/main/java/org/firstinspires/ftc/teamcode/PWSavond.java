@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
 import com.qualcomm.robotcore.util.Range;
 
-
+@Disabled
 @TeleOp(name="PWS AVOND", group="PinktotheFuture")
 public class PWSavond extends LinearOpMode {
     bno055driver imu2;

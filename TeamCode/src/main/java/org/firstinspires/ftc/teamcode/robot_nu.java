@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
 import com.qualcomm.robotcore.util.Range;
 
-
+@Disabled
 @TeleOp(name="robot nu helemaal", group="PinktotheFuture")
 public class robot_nu extends LinearOpMode {
 

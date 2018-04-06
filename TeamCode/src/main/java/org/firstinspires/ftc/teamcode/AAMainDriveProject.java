@@ -12,8 +12,9 @@ import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp(name="PTTF main TeleOp", group="PinktotheFuture")
+@TeleOp(name="Main Drive Project", group="PinktotheFuture")
 public class AAMainDriveProject extends LinearOpMode {
+    bno055driver imu;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -56,6 +57,12 @@ public class AAMainDriveProject extends LinearOpMode {
         //LBdrive.setDirection(DcMotorSimple.Direction.REVERSE);
         //LFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        imu = new bno055driver("IMU", hardwareMap);
+
+        Double[] imuArray;
+        imuArray = new Double[1];
+        imuArray[0] = 0.0;
+
         waitForStart();
 
 
@@ -64,38 +71,39 @@ public class AAMainDriveProject extends LinearOpMode {
             if (gamepad1.dpad_down)   speed = 0.3;
             if (gamepad1.dpad_left)   speed = 0.6;
 
+            double temp;
 
-            RFpower = -((gamepad1.left_stick_y + gamepad1.left_stick_x) / 2);
-            RBpower = -((gamepad1.left_stick_y - gamepad1.left_stick_x) / 2);
-            LFpower = -((gamepad1.left_stick_y - gamepad1.left_stick_x) / 2);
-            LBpower = -((gamepad1.left_stick_y + gamepad1.left_stick_x) / 2);
+            double theta = imu.getAngles()[0];
 
+            double forward = -gamepad1.left_stick_y;
+            double strafe = gamepad1.left_stick_x;
+            double rcw = -gamepad1.right_stick_x;
 
-            if (gamepad1.left_stick_x > -0.1 && gamepad1.left_stick_x < 0.1) {
-                RFpower = -gamepad1.left_stick_y;
-                RBpower = -gamepad1.left_stick_y;
-                LFpower = -gamepad1.left_stick_y;
-                LBpower = -gamepad1.left_stick_y;
-            }
-            if (gamepad1.left_stick_y > -0.1 && gamepad1.left_stick_y < 0.1) {
-                RFpower = -gamepad1.left_stick_x;
-                RBpower = gamepad1.left_stick_x;
-                LFpower = gamepad1.left_stick_x;
-                LBpower = -gamepad1.left_stick_x;
+            if (Math.abs(gamepad1.left_stick_x) > 0 || Math.abs(gamepad1.left_stick_y) > 0 || Math.abs(gamepad1.right_stick_x) > 0 || Math.abs(gamepad1.right_stick_y) > 0 ){
+                imuArray[0] = theta;
             }
 
+            if (theta >0) {
+                temp = forward*Math.cos(theta)-strafe*Math.sin(theta);
+                strafe = forward*Math.sin(theta)+strafe*Math.cos(theta);
+                forward = temp;
+            }
 
-            RFpower = RFpower + (gamepad1.right_stick_x);
-            RBpower = RBpower + (gamepad1.right_stick_x);
-            LFpower = LFpower - (gamepad1.right_stick_x);
-            LBpower = LBpower - (gamepad1.right_stick_x);
+            if (theta <=0) {
+                temp = forward*Math.cos(theta)-strafe*Math.sin(theta);
+                strafe = forward*Math.sin(theta)+strafe*Math.cos(theta);
+                forward = temp;
+            }
+
+            LFpower = forward+rcw+strafe;
+            RFpower = forward-rcw-strafe;
+            LBpower = forward+rcw-strafe;
+            RBpower = forward-rcw+strafe;
 
             Range.clip(RFpower, -1, 1);
             Range.clip(RBpower, -1, 1);
             Range.clip(LFpower, -1, 1);
             Range.clip(LBpower, -1, 1);
-
-
 
             LFdrive.setPower(-LFpower * speed);
             RBdrive.setPower(-RBpower * speed);
@@ -125,30 +133,16 @@ public class AAMainDriveProject extends LinearOpMode {
             if (gamepad2.start){
                 intakespeed = 1;
             }
-            if (gamepad1.left_trigger > 0.1){
-                intakeL.setPower(gamepad1.right_trigger * intakespeed);
-                intakeR.setPower(-gamepad1.right_trigger * intakespeed);
-                //intakeR.setPower(((Math.sin(getRuntime()*4) )*0.25 + 0.75) * -gamepad1.left_trigger);
-                //intakeL.setPower(((Math.sin(getRuntime()*4) )*0.25 + 0.75) * gamepad1.left_trigger);
-                telemetry.addData("ja",intakeL.getPower());
-            } else {
-                if (gamepad1.right_trigger > 0.1) {
-                    intakeL.setPower(-gamepad1.right_trigger * intakespeed);
-                    intakeR.setPower(gamepad1.right_trigger * intakespeed);
-                } else {
-                    intakeL.setPower(0);
-                    intakeR.setPower(0);
-                }
-            }
 
-            if (gamepad2.left_trigger > 0.1) {
-                intakeL.setPower(gamepad2.left_trigger * intakespeed);
-                intakeR.setPower(-gamepad2.left_trigger * intakespeed);
+
+            if (gamepad2.right_trigger > 0.1) {
+                intakeL.setPower(gamepad2.right_trigger * intakespeed);
+                intakeR.setPower(-gamepad2.right_trigger * intakespeed);
 
             } else {
-                if (gamepad2.right_trigger > 0.1) {
-                    intakeL.setPower(-gamepad2.right_trigger * intakespeed);
-                    intakeR.setPower(gamepad2.right_trigger * intakespeed);
+                if (gamepad2.left_trigger > 0.1) {
+                    intakeL.setPower(-gamepad2.left_trigger * intakespeed);
+                    intakeR.setPower(gamepad2.left_trigger * intakespeed);
                 } else {
                     intakeL.setPower(0);
                     intakeR.setPower(0);

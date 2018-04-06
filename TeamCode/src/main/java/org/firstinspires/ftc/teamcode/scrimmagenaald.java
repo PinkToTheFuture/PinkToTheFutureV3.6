@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
-
+@Disabled
 @TeleOp(name="scrimmagenaald V1", group="PinktotheFuture")
 public class scrimmagenaald extends LinearOpMode {
     bno055driver imu;

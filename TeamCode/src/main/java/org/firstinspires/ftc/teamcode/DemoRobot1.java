@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
 import com.qualcomm.robotcore.util.Range;
 
-
+@Disabled
 @TeleOp(name="Opendag Robot met fcd", group="PinktotheFuture")
 public class DemoRobot1 extends LinearOpMode {
     bno055driver imu2; //to use the second, custom imu driver
