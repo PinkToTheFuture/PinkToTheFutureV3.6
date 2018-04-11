@@ -186,7 +186,7 @@ public class AAMainAutoProject extends LinearOpMode {
                     telemetry.addData("picto: ", pictographs);
                     telemetry.addData("correction: ", correction);
                     telemetry.update();
-                    //StrafeRight(correction, .3);
+                    //StrafeRight(correction, .2);
                     //servo glyph
                 }
                 if (pictographs == Pictographs.CENTER) {
@@ -199,7 +199,7 @@ public class AAMainAutoProject extends LinearOpMode {
                     telemetry.addData("picto: ", pictographs);
                     telemetry.addData("correction: ", correction);
                     telemetry.update();
-                    //StrafeRight(correction, .3);
+                    //StrafeRight(correction, .2);
                     //servo glyph
                 }
                 if (pictographs == Pictographs.RIGHT) {
@@ -212,7 +212,7 @@ public class AAMainAutoProject extends LinearOpMode {
                     telemetry.addData("picto: ", pictographs);
                     telemetry.addData("correction: ", correction);
                     telemetry.update();
-                    //StrafeRight(correction, .3);
+                    //StrafeRight(correction, .2);
                     //servo glyph
 
                 }
