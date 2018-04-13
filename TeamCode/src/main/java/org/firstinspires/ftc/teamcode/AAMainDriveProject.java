@@ -39,7 +39,7 @@ public class AAMainDriveProject extends LinearOpMode {
         Servo bakjedicht = hardwareMap.servo.get("bakjedicht");
         Servo anglefishingrod = hardwareMap.servo.get("anglefishingrod");
         Servo filamentmanipulator = hardwareMap.servo.get("filamentmanipulator");
-        filamentmanipulator.setPosition(0.2);
+        filamentmanipulator.setPosition(1);
 
         DcMotor intakeR = hardwareMap.dcMotor.get("intaker");
         DcMotor intakeL = hardwareMap.dcMotor.get("intakel");
@@ -72,7 +72,7 @@ public class AAMainDriveProject extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-            filamentmanipulator.setPosition(0.7);
+            filamentmanipulator.setPosition(0.5 );
             if (gamepad1.dpad_up)     speed = 1;
             if (gamepad1.dpad_down)   speed = 0.3;
             if (gamepad1.dpad_left)   speed = 0.6;
@@ -127,12 +127,12 @@ public class AAMainDriveProject extends LinearOpMode {
             moverelic.setPosition(relicpos);
 
 
-            if (gamepad2.a) bakjedicht.setPosition(0.3);
+            if (gamepad2.a) bakjedicht.setPosition(0.4);
             if (gamepad2.b) bakjedicht.setPosition(0.05);
 
-            if (bakjedicht.getPosition() == 0.3) {
-                if (gamepad2.x) bakjeturn.setPosition(0.2);
-                if (gamepad2.y) bakjeturn.setPosition(1);
+            if (bakjedicht.getPosition() > 0.2) {
+                if (gamepad2.y) bakjeturn.setPosition(0.2);
+                if (gamepad2.x) bakjeturn.setPosition(1);
             }
 
 
@@ -161,8 +161,8 @@ public class AAMainDriveProject extends LinearOpMode {
                     intakeL.setPower(-gamepad2.left_trigger * intakespeed);
                     intakeR.setPower(gamepad2.left_trigger * intakespeed);
                 } else {
-                    intakeL.setPower(0);
                     intakeR.setPower(0);
+                    intakeL.setPower(0);
                 }
             }
 
