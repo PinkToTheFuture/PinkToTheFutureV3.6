@@ -23,10 +23,12 @@ public class AAMainDriveProject extends LinearOpMode {
         double RFpower = 0;
         double RBpower = 0;
         double speed = 1;
-        double intakespeed = 1;
         double relicpos = 0.6;
         double relicanglepos = 0.5;
-
+        double timeforbak = 0;
+        boolean bakjepos = false;
+        boolean bakjedichtpos = true;
+        boolean timeforbakbool = true;
 
         DigitalChannel endbottomglyph = hardwareMap.get(DigitalChannel.class, "endbottombak");
         DigitalChannel endtopglyph = hardwareMap.get(DigitalChannel.class, "endtopbak");
@@ -40,6 +42,8 @@ public class AAMainDriveProject extends LinearOpMode {
         Servo anglefishingrod = hardwareMap.servo.get("anglefishingrod");
         Servo filamentmanipulator = hardwareMap.servo.get("filamentmanipulator");
         filamentmanipulator.setPosition(1);
+        Servo jewelextender = hardwareMap.servo.get("jewelextender");
+        Servo jewelchooser = hardwareMap.servo.get("jewelchooser");
 
         DcMotor intakeR = hardwareMap.dcMotor.get("intaker");
         DcMotor intakeL = hardwareMap.dcMotor.get("intakel");
@@ -117,31 +121,49 @@ public class AAMainDriveProject extends LinearOpMode {
             RFdrive.setPower(-RFpower * speed);
 
 
-            if (gamepad2.right_bumper)  grabrelic.setPosition(0);
-            if (gamepad2.left_bumper)   grabrelic.setPosition(0.5);
+
+            if (gamepad1.y) jewelextender.setPosition(0);
+            if (gamepad1.x) jewelextender.setPosition(0.95);
+            if (gamepad1.a && !gamepad1.start) jewelchooser.setPosition(0.3);
+            if (gamepad1.b && !gamepad1.start) jewelchooser.setPosition(0.7);
+
+            if (gamepad2.right_bumper)  grabrelic.setPosition(0.13);
+            if (gamepad2.left_bumper)   grabrelic.setPosition(0.7);
 
 
-            if (gamepad2.dpad_up)  relicpos += 0.008;
-            if (gamepad2.dpad_down)  relicpos -= 0.008;
+            if (gamepad2.dpad_up)  relicpos += 0.01;
+            if (gamepad2.dpad_down)  relicpos -= 0.01;
             if (gamepad2.dpad_right) relicpos = 0.6;
             moverelic.setPosition(relicpos);
 
 
-            if (gamepad2.a) bakjedicht.setPosition(0.4);
-            if (gamepad2.b) bakjedicht.setPosition(0.05);
+            if (gamepad2.b && !gamepad2.start && !timeforbakbool) {
+                timeforbak = getRuntime() + 0.3;
+                if (bakjedichtpos) {
+                    bakjedicht.setPosition(0.4);
+                    bakjedichtpos = false;
+                } else {
+                    bakjedicht.setPosition(0.05);
+                    bakjedichtpos = true;
+                }
+                timeforbakbool = true;
 
-            if (bakjedicht.getPosition() > 0.2) {
-                if (gamepad2.y) bakjeturn.setPosition(0.2);
-                if (gamepad2.x) bakjeturn.setPosition(1);
+            }
+            if (timeforbak<getRuntime() && timeforbakbool){
+                timeforbakbool = false;
+                if (bakjepos) {
+                    bakjeturn.setPosition(0.2);
+                    bakjepos = false;
+                } else {
+                    bakjeturn.setPosition(1);
+                    bakjepos = true;
+                }
+            }
+            if (gamepad1.a) {
+                bakjeturn.setPosition(0.2);
+                bakjedicht.setPosition(0.05);
             }
 
-
-            if (gamepad2.back){
-                intakespeed = 0.5;
-            }
-            if (gamepad2.start){
-                intakespeed = 1;
-            }
 
             relicanglepos = relicanglepos + gamepad2.left_stick_x/30;
             if (relicanglepos > 0.8){
@@ -153,13 +175,13 @@ public class AAMainDriveProject extends LinearOpMode {
             anglefishingrod.setPosition(relicanglepos);
 
             if (gamepad2.right_trigger > 0.1) {
-                intakeL.setPower(gamepad2.right_trigger * intakespeed);
-                intakeR.setPower(-gamepad2.right_trigger * intakespeed);
+                intakeL.setPower(gamepad2.right_trigger);
+                intakeR.setPower(-gamepad2.right_trigger);
 
             } else {
                 if (gamepad2.left_trigger > 0.1) {
-                    intakeL.setPower(-gamepad2.left_trigger * intakespeed);
-                    intakeR.setPower(gamepad2.left_trigger * intakespeed);
+                    intakeL.setPower(-gamepad2.left_trigger);
+                    intakeR.setPower(gamepad2.left_trigger);
                 } else {
                     intakeR.setPower(0);
                     intakeL.setPower(0);
@@ -170,7 +192,6 @@ public class AAMainDriveProject extends LinearOpMode {
             switch (endbottomglyph.getState() + "-" + endtopglyph.getState()){
                 case "true-true":
                     telemetry.addData("ERROR","both end stops at the same time");
-                    telemetry.update();
                     //stop();
 
                 case "true-false":
