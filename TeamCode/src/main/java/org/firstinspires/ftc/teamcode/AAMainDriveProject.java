@@ -25,10 +25,13 @@ public class AAMainDriveProject extends LinearOpMode {
         double speed = 1;
         double relicpos = 0.6;
         double relicanglepos = 0.5;
-        double timeforbak = 0;
-        boolean bakjepos = false;
-        boolean bakjedichtpos = true;
-        boolean timeforbakbool = true;
+        double timeforbak1 = 0;
+        double timeforbak2 = 0;
+        boolean bakjebovenpos = false;
+        boolean bakjedichtpos = false;
+        boolean timeforbakbool1 = false;
+        boolean timeforbakbool2 = false;
+        boolean ignore2bBak = false;
 
         DigitalChannel endbottomglyph = hardwareMap.get(DigitalChannel.class, "endbottombak");
         DigitalChannel endtopglyph = hardwareMap.get(DigitalChannel.class, "endtopbak");
@@ -93,13 +96,13 @@ public class AAMainDriveProject extends LinearOpMode {
                 imuArray[0] = theta;
             }
 
-            if (theta >0) {
+            if (theta > 0) {
                 temp = forward*Math.cos(theta)-strafe*Math.sin(theta);
                 strafe = forward*Math.sin(theta)+strafe*Math.cos(theta);
                 forward = temp;
             }
 
-            if (theta <=0) {
+            if (theta <= 0) {
                 temp = forward*Math.cos(theta)-strafe*Math.sin(theta);
                 strafe = forward*Math.sin(theta)+strafe*Math.cos(theta);
                 forward = temp;
@@ -137,28 +140,37 @@ public class AAMainDriveProject extends LinearOpMode {
             moverelic.setPosition(relicpos);
 
 
-            if (gamepad2.b && !gamepad2.start && !timeforbakbool) {
-                timeforbak = getRuntime() + 0.3;
-                if (bakjedichtpos) {
-                    bakjedicht.setPosition(0.4);
-                    bakjedichtpos = false;
-                } else {
-                    bakjedicht.setPosition(0.05);
-                    bakjedichtpos = true;
-                }
-                timeforbakbool = true;
+
+            if (gamepad2.b && !gamepad2.start && !timeforbakbool1 && !timeforbakbool2) {
+                timeforbak1 = getRuntime() + 0.5;
+                timeforbak2 = getRuntime() + 1.2;
+                bakjedicht.setPosition(0.4);
+                bakjedichtpos = true;
+                timeforbakbool1 = true;
+                timeforbakbool2 = true;
 
             }
-            if (timeforbak<getRuntime() && timeforbakbool){
-                timeforbakbool = false;
-                if (bakjepos) {
+            telemetry.addData("boven:", bakjebovenpos);
+            telemetry.addData("dicht:", bakjedichtpos);
+            if (timeforbak1<getRuntime() && timeforbakbool1){
+                timeforbakbool1 = false;
+                if (!bakjebovenpos) {
                     bakjeturn.setPosition(0.2);
-                    bakjepos = false;
+                    bakjebovenpos = true;
                 } else {
                     bakjeturn.setPosition(1);
-                    bakjepos = true;
+                    bakjebovenpos = false;
+                }
+                timeforbakbool2 = true;
+            }
+            if (timeforbak2<getRuntime() && timeforbakbool2){
+                timeforbakbool2 = false;
+                if (!bakjebovenpos){
+                    bakjedicht.setPosition(0.05);
+                    bakjedichtpos = false;
                 }
             }
+
             if (gamepad1.a) {
                 bakjeturn.setPosition(0.2);
                 bakjedicht.setPosition(0.05);
