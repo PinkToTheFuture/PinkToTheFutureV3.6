@@ -171,7 +171,7 @@ public class AAMainDriveProject extends LinearOpMode {
                 }
             }
 
-            if (gamepad1.a) {
+            if (gamepad1.a && !gamepad1.start) {
                 bakjeturn.setPosition(0.2);
                 bakjedicht.setPosition(0.05);
             }
