@@ -32,6 +32,7 @@ public class AAMainDriveProject extends LinearOpMode {
         boolean timeforbakbool1 = false;
         boolean timeforbakbool2 = false;
         boolean ignore2bBak = false;
+        boolean ignorerestofintake = false;
 
         DigitalChannel endbottomglyph = hardwareMap.get(DigitalChannel.class, "endbottombak");
         DigitalChannel endtopglyph = hardwareMap.get(DigitalChannel.class, "endtopbak");
@@ -50,8 +51,13 @@ public class AAMainDriveProject extends LinearOpMode {
 
         DcMotor intakeR = hardwareMap.dcMotor.get("intaker");
         DcMotor intakeL = hardwareMap.dcMotor.get("intakel");
+
         DcMotor relic = hardwareMap.dcMotor.get("relic");
+        relic.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        idle();
+        relic.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         relic.setDirection(DcMotorSimple.Direction.REVERSE);
+
         DcMotor bak = hardwareMap.dcMotor.get("bak");
 
         DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
@@ -127,10 +133,17 @@ public class AAMainDriveProject extends LinearOpMode {
 
             if (gamepad1.y) jewelextender.setPosition(0);
             if (gamepad1.x) jewelextender.setPosition(0.95);
-            if (gamepad1.a && !gamepad1.start) jewelchooser.setPosition(0.3);
-            if (gamepad1.b && !gamepad1.start) jewelchooser.setPosition(0.7);
 
-            if (gamepad2.right_bumper)  grabrelic.setPosition(0.13);
+            if (gamepad1.a && !gamepad1.start) {jewelchooser.setPosition(0.3);
+            } else {
+                if (gamepad1.b && !gamepad1.start){
+                    jewelchooser.setPosition(0.7);
+                } else {
+                    jewelchooser.setPosition(0.45);
+                }
+
+            }
+            if (gamepad2.right_bumper && !(gamepad2.right_trigger>0.1))  grabrelic.setPosition(0.13);
             if (gamepad2.left_bumper)   grabrelic.setPosition(0.7);
 
 
@@ -142,8 +155,8 @@ public class AAMainDriveProject extends LinearOpMode {
 
 
             if (gamepad2.b && !gamepad2.start && !timeforbakbool1 && !timeforbakbool2) {
-                timeforbak1 = getRuntime() + 0.5;
-                timeforbak2 = getRuntime() + 1.2;
+                timeforbak1 = getRuntime() + 0.2;
+                timeforbak2 = getRuntime() + 0.7;
                 bakjedicht.setPosition(0.4);
                 bakjedichtpos = true;
                 timeforbakbool1 = true;
@@ -166,16 +179,17 @@ public class AAMainDriveProject extends LinearOpMode {
             if (timeforbak2<getRuntime() && timeforbakbool2){
                 timeforbakbool2 = false;
                 if (!bakjebovenpos){
-                    bakjedicht.setPosition(0.05);
+                    bakjedicht.setPosition(0.15);
                     bakjedichtpos = false;
                 }
             }
 
             if (gamepad1.a && !gamepad1.start) {
-                bakjeturn.setPosition(0.2);
                 bakjedicht.setPosition(0.05);
             }
-
+            if (gamepad2.a && !gamepad2.start) {
+                bakjedicht.setPosition(0.05);
+            }
 
             relicanglepos = relicanglepos + gamepad2.left_stick_x/30;
             if (relicanglepos > 0.8){
@@ -186,6 +200,13 @@ public class AAMainDriveProject extends LinearOpMode {
             }
             anglefishingrod.setPosition(relicanglepos);
 
+            if ((gamepad2.right_trigger > 0.1) && gamepad2.right_bumper){
+                intakeL.setDirection(DcMotorSimple.Direction.FORWARD);
+                intakeR.setDirection(DcMotorSimple.Direction.REVERSE);
+            } else {
+                intakeL.setDirection(DcMotorSimple.Direction.FORWARD);
+                intakeR.setDirection(DcMotorSimple.Direction.FORWARD);
+            }
             if (gamepad2.right_trigger > 0.1) {
                 intakeL.setPower(gamepad2.right_trigger);
                 intakeR.setPower(-gamepad2.right_trigger);
@@ -224,6 +245,7 @@ public class AAMainDriveProject extends LinearOpMode {
             telemetry.addData("LF",LFpower);
             telemetry.addData("RB",RBpower);
             telemetry.addData("RF",RFpower);
+            telemetry.addData("relic extruder", relic.getCurrentPosition());
             telemetry.update();
 
 
