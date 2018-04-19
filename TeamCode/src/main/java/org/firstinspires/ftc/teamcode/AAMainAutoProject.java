@@ -294,7 +294,7 @@ public class AAMainAutoProject extends LinearOpMode {
             Range.clip(LFpower, -1, 1);
             Range.clip(LBpower, -1, 1);
 
-
+            telemetry.addLine("TeleOp Activated");
             telemetry.addData("LB", LBpower);
             telemetry.addData("LF", LFpower);
             telemetry.addData("RB", RBpower);
@@ -374,8 +374,83 @@ public class AAMainAutoProject extends LinearOpMode {
                 loop=false;
             }   */
 
-            if (LFdrive.getCurrentPosition() == (encv) || LBdrive.getCurrentPosition() == (encv) || RFdrive.getCurrentPosition() == (encv) || RBdrive.getCurrentPosition() == (encv))  {
+            if (LFdrive.getCurrentPosition() > (encv - 10) && LBdrive.getCurrentPosition() > (encv - 10) && RFdrive.getCurrentPosition() > (encv - 40) && RBdrive.getCurrentPosition() > (encv - 10)) {
+                loop = false;
+            }
+
+        }
+        LFdrive.setPower(0);
+        LBdrive.setPower(0);
+        RFdrive.setPower(0);
+        RBdrive.setPower(0);
+    }
+
+    public void TurnRight(double rot, double pwr) throws InterruptedException {
+        boolean loop = true;
+        int encv = (int) Math.round(rot*537.5);
+        DcMotor LFdrive = hardwareMap.dcMotor.get("LFdrive");
+        DcMotor RBdrive = hardwareMap.dcMotor.get("RBdrive");
+        DcMotor LBdrive = hardwareMap.dcMotor.get("LBdrive");
+        DcMotor RFdrive = hardwareMap.dcMotor.get("RFdrive");
+        LFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        LBdrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        RFdrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        RBdrive.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        LFdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LBdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RFdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RBdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        idle();
+
+        LFdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LBdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RFdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RBdrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (loop && opModeIsActive()){
+
+            LFdrive.setPower(-pwr);
+            LBdrive.setPower(-pwr);
+            RFdrive.setPower(pwr);
+            RBdrive.setPower(pwr);
+
+            LFdrive.setTargetPosition(encv);     //537.6
+            LBdrive.setTargetPosition(encv);
+            RFdrive.setTargetPosition(encv);
+            RBdrive.setTargetPosition(encv);
+            //sleep(5000);
+
+            waitOneFullHardwareCycle();
+            telemetry.addData("LFdrive", LFdrive.getCurrentPosition());
+            telemetry.addData("LBdrive", LBdrive.getCurrentPosition());
+            telemetry.addData("RFdrive", RFdrive.getCurrentPosition());
+            telemetry.addData("RBdrive", RBdrive.getCurrentPosition());
+            telemetry.update();
+
+
+            /*
+            if (LFdrive.getCurrentPosition() > RFdrive.getCurrentPosition()){
+                LFdrive.setPower(-pwr * 0.75);
+                LBdrive.setPower(-pwr * 0.75);
+                RFdrive.setPower(pwr * 1.33);
+                RBdrive.setPower(pwr * 1.33);
+            }
+            if (LFdrive.getCurrentPosition() > RFdrive.getCurrentPosition()){
+                LFdrive.setPower(-pwr * 1.33);
+                LBdrive.setPower(-pwr * 1.33);
+                RFdrive.setPower(pwr * 0.75);
+                RBdrive.setPower(pwr * 0.75);
+            }
+            */
+            /*
+            if (LFdrive.getCurrentPosition() > ((encv) - 40) && LBdrive.getCurrentPosition() > ((encv) - 40) && RFdrive.getCurrentPosition() > ((encv) - 40) && RBdrive.getCurrentPosition() > ((encv) - 40)) {
+                sleep(500);
                 loop=false;
+            }   */
+
+            if (LFdrive.getCurrentPosition() > (encv - 10) && LBdrive.getCurrentPosition() > (encv - 10) && RFdrive.getCurrentPosition() > (encv - 40) && RBdrive.getCurrentPosition() > (encv - 10)) {
+                loop = false;
             }
 
         }
@@ -450,8 +525,8 @@ public class AAMainAutoProject extends LinearOpMode {
                 loop=false;
             }   */
 
-            if (LFdrive.getCurrentPosition() == (encv) || LBdrive.getCurrentPosition() == (encv) || RFdrive.getCurrentPosition() == (encv) || RBdrive.getCurrentPosition() == (encv))  {
-                loop=false;
+            if (LFdrive.getCurrentPosition() > (encv - 10) && LBdrive.getCurrentPosition() > (encv - 10) && RFdrive.getCurrentPosition() > (encv - 40) && RBdrive.getCurrentPosition() > (encv - 10)) {
+                loop = false;
             }
 
         }
@@ -503,8 +578,8 @@ public class AAMainAutoProject extends LinearOpMode {
             telemetry.addData("RBdrive", RBdrive.getCurrentPosition());
             telemetry.update();
 
-            if (LFdrive.getCurrentPosition() == (encv) || LBdrive.getCurrentPosition() == (encv) || RFdrive.getCurrentPosition() == (encv) || RBdrive.getCurrentPosition() == (encv))  {
-                loop=false;
+            if (LFdrive.getCurrentPosition() > (encv - 10) && LBdrive.getCurrentPosition() > (encv - 10) && RFdrive.getCurrentPosition() > (encv - 40) && RBdrive.getCurrentPosition() > (encv - 10)) {
+                loop = false;
             }
 
         }
