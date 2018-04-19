@@ -27,12 +27,15 @@ public class AAMainDriveProject extends LinearOpMode {
         double relicanglepos = 0.5;
         double timeforbak1 = 0;
         double timeforbak2 = 0;
+        double jewelextendertimeheen = 0;
+        double jewelextendertimeterug = 0;
+        double jewelextenderpos = 0;
+        boolean jewelextenderbuttonheen = false;
+        boolean jewelextenderbuttonterug = false;
         boolean bakjebovenpos = false;
         boolean bakjedichtpos = false;
         boolean timeforbakbool1 = false;
         boolean timeforbakbool2 = false;
-        boolean ignore2bBak = false;
-        boolean ignorerestofintake = false;
 
         DigitalChannel endbottomglyph = hardwareMap.get(DigitalChannel.class, "endbottombak");
         DigitalChannel endtopglyph = hardwareMap.get(DigitalChannel.class, "endtopbak");
@@ -131,12 +134,30 @@ public class AAMainDriveProject extends LinearOpMode {
 
 
 
-            if (gamepad1.y) jewelextender.setPosition(0);
-            if (gamepad1.x) jewelextender.setPosition(0.95);
+            if (gamepad1.y && gamepad1.right_bumper && !jewelextenderbuttonterug) {
+                jewelextendertimeterug = getRuntime() + 3.5;
+                jewelextenderbuttonterug = true;
+            }
+            if (gamepad1.x && gamepad1.right_bumper && !jewelextenderbuttonheen) {
+                jewelextendertimeheen = getRuntime() + 3.5;
+                jewelextenderbuttonheen = true;
+            }
+            if (jewelextendertimeterug >= getRuntime()){
+                jewelextenderpos = jewelextenderpos - 0.03;
+            } else { jewelextenderbuttonterug = false; }
 
-            if (gamepad1.a && !gamepad1.start) {jewelchooser.setPosition(0.3);
+            if (jewelextendertimeheen >= getRuntime()){
+                jewelextenderpos = jewelextenderpos + 0.03;
+            } else { jewelextenderbuttonheen = false; }
+            if (jewelextenderpos <= 0) jewelextenderpos = 0;
+            if (jewelextenderpos >= 1) jewelextenderpos = 1;
+            jewelextender.setPosition(jewelextenderpos);
+
+
+            if (gamepad1.a && gamepad1.right_bumper && !gamepad1.start) {
+                jewelchooser.setPosition(0.3);
             } else {
-                if (gamepad1.b && !gamepad1.start){
+                if (gamepad1.b && gamepad1.right_bumper && !gamepad1.start){
                     jewelchooser.setPosition(0.7);
                 } else {
                     jewelchooser.setPosition(0.45);
@@ -157,14 +178,17 @@ public class AAMainDriveProject extends LinearOpMode {
             if (gamepad2.b && !gamepad2.start && !timeforbakbool1 && !timeforbakbool2) {
                 timeforbak1 = getRuntime() + 0.2;
                 timeforbak2 = getRuntime() + 0.7;
-                bakjedicht.setPosition(0.4);
+                bakjedicht.setPosition(0.3);
                 bakjedichtpos = true;
                 timeforbakbool1 = true;
                 timeforbakbool2 = true;
 
             }
+            telemetry.addData("boven:", bakjeturn.getPosition());
             telemetry.addData("boven:", bakjebovenpos);
+            telemetry.addData("dicht:", bakjedicht.getPosition());
             telemetry.addData("dicht:", bakjedichtpos);
+
             if (timeforbak1<getRuntime() && timeforbakbool1){
                 timeforbakbool1 = false;
                 if (!bakjebovenpos) {
@@ -185,10 +209,10 @@ public class AAMainDriveProject extends LinearOpMode {
             }
 
             if (gamepad1.a && !gamepad1.start) {
-                bakjedicht.setPosition(0.05);
+                bakjedicht.setPosition(0.15);
             }
             if (gamepad2.a && !gamepad2.start) {
-                bakjedicht.setPosition(0.05);
+                bakjedicht.setPosition(0.15);
             }
 
             relicanglepos = relicanglepos + gamepad2.left_stick_x/30;
