@@ -36,11 +36,14 @@ public class AAMainDriveProject extends LinearOpMode {
         boolean bakjedichtpos = false;
         boolean timeforbakbool1 = false;
         boolean timeforbakbool2 = false;
+        boolean endbottombakbool;
+        boolean endtopbakbool;
 
-        DigitalChannel endbottomglyph = hardwareMap.get(DigitalChannel.class, "endbottombak");
-        DigitalChannel endtopglyph = hardwareMap.get(DigitalChannel.class, "endtopbak");
-        endbottomglyph.setMode(DigitalChannel.Mode.INPUT);
-        endtopglyph.setMode(DigitalChannel.Mode.INPUT);
+
+        DigitalChannel endbottombak = hardwareMap.get(DigitalChannel.class, "endbottombak");
+        DigitalChannel endtopbak = hardwareMap.get(DigitalChannel.class, "endtopbak");
+        endbottombak.setMode(DigitalChannel.Mode.INPUT);
+        endtopbak.setMode(DigitalChannel.Mode.INPUT);
 
         Servo moverelic = hardwareMap.servo.get("moverelic");
         Servo grabrelic = hardwareMap.servo.get("grabrelic");
@@ -149,8 +152,8 @@ public class AAMainDriveProject extends LinearOpMode {
             if (jewelextendertimeheen >= getRuntime()){
                 jewelextenderpos = jewelextenderpos + 0.03;
             } else { jewelextenderbuttonheen = false; }
-            if (jewelextenderpos <= 0) jewelextenderpos = 0;
-            if (jewelextenderpos >= 1) jewelextenderpos = 1;
+            if (jewelextenderpos < 0.1) jewelextenderpos = 0.1;
+            if (jewelextenderpos > 0.65) jewelextenderpos = 0.65;
             jewelextender.setPosition(jewelextenderpos);
 
 
@@ -246,25 +249,22 @@ public class AAMainDriveProject extends LinearOpMode {
             }
 
 
-            switch (endbottomglyph.getState() + "-" + endtopglyph.getState()){
-                case "true-true":
-                    telemetry.addData("ERROR","both end stops at the same time");
-                    //stop();
 
-                case "true-false":
-                    //bak.setPower(0.2);
+            endbottombakbool = endbottombak.getState();
+            endtopbakbool = endtopbak.getState();
 
-                case "false-true":
-                    //bak.setPower(-0.2);
-                case "false-false":
-                    bak.setPower(gamepad2.right_stick_y);
+            if (endbottombakbool && endtopbakbool){
+                bak.setPower(gamepad2.right_stick_y);
+            } else {
+                if (!endbottombakbool && endtopbakbool) bak.setPower(0.4);
+                if (endbottombakbool && !endtopbakbool) bak.setPower(-0.4);
+                if (!endbottombakbool && !endtopbakbool) bak.setPower(0);
             }
-
-
-            bak.setPower(gamepad2.right_stick_y);
             relic.setPower(gamepad2.left_stick_y);
 
-
+            telemetry.addData("endstopbottom", endbottombak.getState());
+            telemetry.addData("endstoptop", endtopbak.getState());
+            telemetry.addData("motor", bak.getPower());
             telemetry.addData("LB",LBpower);
             telemetry.addData("LF",LFpower);
             telemetry.addData("RB",RBpower);

@@ -182,12 +182,10 @@ public class AAMainAutoProject extends LinearOpMode {
                     integral = error + integral;
                     lasterror = error;
                     deriavtive = error - lasterror;
-                    correction = (Kp*error + Ki*integral + Kd*deriavtive)/1000;
+                    correction = (Kp*error + Ki*integral + Kd*deriavtive);
                     telemetry.addData("picto: ", pictographs);
                     telemetry.addData("correction: ", correction);
                     telemetry.update();
-                    //StrafeRight(correction, .2);
-                    //servo glyph
                 }
                 if (pictographs == Pictographs.CENTER) {
                     PvC = cryptoboxDetector.getCryptoBoxCenterPosition();
