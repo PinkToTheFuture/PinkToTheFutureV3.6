@@ -181,7 +181,7 @@ public class AAMainDriveProject extends LinearOpMode {
             if (gamepad2.b && !gamepad2.start && !timeforbakbool1 && !timeforbakbool2) {
                 timeforbak1 = getRuntime() + 0.2;
                 timeforbak2 = getRuntime() + 0.7;
-                bakjedicht.setPosition(0.3);
+                bakjedicht.setPosition(0.25);
                 bakjedichtpos = true;
                 timeforbakbool1 = true;
                 timeforbakbool2 = true;
@@ -198,7 +198,7 @@ public class AAMainDriveProject extends LinearOpMode {
                     bakjeturn.setPosition(0.2);
                     bakjebovenpos = true;
                 } else {
-                    bakjeturn.setPosition(1);
+                    bakjeturn.setPosition(0.7);
                     bakjebovenpos = false;
                 }
                 timeforbakbool2 = true;
@@ -206,16 +206,18 @@ public class AAMainDriveProject extends LinearOpMode {
             if (timeforbak2<getRuntime() && timeforbakbool2){
                 timeforbakbool2 = false;
                 if (!bakjebovenpos){
-                    bakjedicht.setPosition(0.15);
+                    bakjedicht.setPosition(0.1);
                     bakjedichtpos = false;
                 }
             }
 
             if (gamepad1.a && !gamepad1.start) {
-                bakjedicht.setPosition(0.15);
+                bakjedicht.setPosition(0.1);
+                bakjedichtpos = false;
             }
             if (gamepad2.a && !gamepad2.start) {
-                bakjedicht.setPosition(0.15);
+                bakjedicht.setPosition(0.1);
+                bakjedichtpos = false;
             }
 
             relicanglepos = relicanglepos + gamepad2.left_stick_x/30;

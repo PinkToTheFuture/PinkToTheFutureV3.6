@@ -107,8 +107,13 @@ public class AAMainAutoProject extends LinearOpMode {
 
     public void Jewels() throws InterruptedException {
 
-        Servo Jewelservo = hardwareMap.servo.get("Jewelservo");
+        Servo jewelextender = hardwareMap.servo.get("jewelextender");
+        Servo jewelchooser = hardwareMap.servo.get("jewelchooser");
+        jewelchooser.setPosition(0.5);
 
+        double jewelextenderpos = 0;
+        double jewelextendertime = 0;
+        boolean loopjewel = true;
 
 
         jewelDetector = new JewelDetector();
@@ -126,22 +131,45 @@ public class AAMainAutoProject extends LinearOpMode {
         jewelDetector.rotateMat = true;
         jewelDetector.enable();
 
+        jewelextendertime = getRuntime() + 3.5;
+        while (jewelextendertime > getRuntime() && opModeIsActive()) {
+            jewelextenderpos = jewelextenderpos + 0.03;
+            if (jewelextenderpos < 0.1) jewelextenderpos = 0.1;
+            if (jewelextenderpos > 0.65) jewelextenderpos = 0.65;
+            jewelextender.setPosition(jewelextenderpos);
+
+            telemetry.addData("jewelextender pos", jewelextender.getPosition());
+            telemetry.update();
+            sleep(100);
+        }
+
+
         boolean loop = true;
         while (opModeIsActive()&&loop) {
             /*telemetry.addData("Current Order", "Jewel Order: " + jewelDetector.getCurrentOrder().toString()); // Current Result
             telemetry.addData("Last Order", "Jewel Order: " + jewelDetector.getLastOrder().toString()); // Last Known Result */
             waitOneFullHardwareCycle();
-            switch (jewelDetector.getLastOrder()) {
-                case RED_BLUE:
-                    Jewelservo.setPosition(0);
-                    telemetry.addLine("Servo");
-                    telemetry.update();
-                    sleep(2000);
-                    TurnLeft(1, .3);
-                    jewelDetector.disable();
-                    loop = false;
+            JewelDetector.JewelOrder jewl = jewelDetector.getCurrentOrder();
+
+            if (jewl == JewelDetector.JewelOrder.RED_BLUE){
+                jewelchooser.setPosition(0.1);
+                telemetry.addData("red", jewelDetector.getCurrentOrder());
+                sleep(500);
+                loop = false;
+                jewelDetector.disable();
+            }
+            if (jewl == JewelDetector.JewelOrder.BLUE_RED){
+                jewelchooser.setPosition(0.9);
+                telemetry.addData("blue", jewelDetector.getCurrentOrder());
+                sleep(500);
+                loop = false;
+                jewelDetector.disable();
             }
         }
+            jewelextender.setPosition(0.4);
+            sleep(500);
+            telemetry.update();
+            jewelextender.setPosition(0);
     }
 
     public void Cryptobox() throws InterruptedException {
@@ -466,8 +494,8 @@ public class AAMainAutoProject extends LinearOpMode {
         DcMotor LBdrive = hardwareMap.dcMotor.get("LBdrive");
         DcMotor RFdrive = hardwareMap.dcMotor.get("RFdrive");
         LFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        LBdrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        RFdrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        LBdrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        RFdrive.setDirection(DcMotorSimple.Direction.REVERSE);
         RBdrive.setDirection(DcMotorSimple.Direction.FORWARD);
 
         LFdrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -483,10 +511,10 @@ public class AAMainAutoProject extends LinearOpMode {
 
         while (loop && opModeIsActive()){
 
-            LFdrive.setPower(-pwr);
+            LFdrive.setPower(pwr);
             LBdrive.setPower(pwr);
             RFdrive.setPower(pwr);
-            RBdrive.setPower(-pwr);
+            RBdrive.setPower(pwr);
 
             LFdrive.setTargetPosition(encv);     //537.6
             LBdrive.setTargetPosition(encv);
@@ -517,11 +545,7 @@ public class AAMainAutoProject extends LinearOpMode {
                 RBdrive.setPower(pwr * 0.75);
             }
             */
-            /*
-            if (LFdrive.getCurrentPosition() > ((encv) - 40) && LBdrive.getCurrentPosition() > ((encv) - 40) && RFdrive.getCurrentPosition() > ((encv) - 40) && RBdrive.getCurrentPosition() > ((encv) - 40)) {
-                sleep(500);
-                loop=false;
-            }   */
+
 
             if (LFdrive.getCurrentPosition() > (encv - 10) && LBdrive.getCurrentPosition() > (encv - 10) && RFdrive.getCurrentPosition() > (encv - 40) && RBdrive.getCurrentPosition() > (encv - 10)) {
                 loop = false;
@@ -648,16 +672,18 @@ public class AAMainAutoProject extends LinearOpMode {
          * */
         //Initialisation();
         waitForStart();
-        //Jewels();
-        //StrafeRight(3, .3);
+        Jewels();
+        //StrafeRight(0.3, .2);
         //Vumark();
         //StrafeRight(2, .3);
         //Cryptobox();
         //Teleop();
 
 
-        Forward(1,.2);
-        Teleop();
+        //Forward(1.5,.2);
+
+
+        //Teleop();
 
     }
 }
